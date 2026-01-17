@@ -1,0 +1,72 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:Style src="../GlassTheme.uss" />
+    <ui:Style src="EscapeMenu.uss" />
+    
+    <!-- Full Screen Root - Click outside to close -->
+    <ui:VisualElement name="EscapeMenuRoot" picking-mode="Ignore" class="escape-menu-root">
+        
+        <!-- Semi-transparent overlay on the left 3/4 -->
+        <ui:VisualElement name="OverlayBackground" class="overlay-background" />
+        
+        <!-- Right Side Panel - 1/4 of screen -->
+        <ui:VisualElement name="EscapeMenuPanel" class="escape-menu-panel menu-hidden">
+            
+            <!-- Panel Header with Decorative Line -->
+            <ui:VisualElement name="HeaderContainer" class="header-container">
+                <!-- Wind-like decorative element -->
+                <ui:VisualElement class="wind-decoration">
+                    <ui:VisualElement class="wind-line wind-line-1" />
+                    <ui:VisualElement class="wind-line wind-line-2" />
+                    <ui:VisualElement class="wind-line wind-line-3" />
+                </ui:VisualElement>
+                
+                <ui:Label text="PAUSED" name="MenuTitle" class="menu-title glass-text" />
+                
+                <!-- Subtle separator -->
+                <ui:VisualElement class="header-separator" />
+            </ui:VisualElement>
+
+            <!-- Menu Buttons Container -->
+            <ui:VisualElement name="ButtonContainer" class="button-container">
+                
+                <ui:Button name="ResumeButton" text="Resume" class="menu-button glass-button">
+                    <ui:VisualElement class="button-icon resume-icon" />
+                </ui:Button>
+                
+                <ui:Button name="SettingsButton" text="Settings" class="menu-button glass-button">
+                    <ui:VisualElement class="button-icon settings-icon" />
+                </ui:Button>
+                
+                <ui:VisualElement class="menu-divider" />
+                
+                <ui:Button name="SaveButton" text="Save Game" class="menu-button glass-button">
+                    <ui:VisualElement class="button-icon save-icon" />
+                </ui:Button>
+                
+                <ui:Button name="LoadButton" text="Load Game" class="menu-button glass-button">
+                    <ui:VisualElement class="button-icon load-icon" />
+                </ui:Button>
+                
+                <ui:VisualElement class="menu-divider" />
+                
+                <ui:Button name="MainMenuButton" text="Main Menu" class="menu-button glass-button warning-button">
+                    <ui:VisualElement class="button-icon home-icon" />
+                </ui:Button>
+                
+                <ui:Button name="QuitButton" text="Quit Game" class="menu-button glass-button danger-button">
+                    <ui:VisualElement class="button-icon quit-icon" />
+                </ui:Button>
+                
+            </ui:VisualElement>
+
+            <!-- Footer with Version/Info -->
+            <ui:VisualElement name="FooterContainer" class="footer-container">
+                <ui:VisualElement class="footer-separator" />
+                <ui:Label text="Project Leaf v0.1.0" class="footer-text glass-text" />
+                <ui:Label text="Press ESC to resume" class="footer-hint glass-text" />
+            </ui:VisualElement>
+            
+        </ui:VisualElement>
+        
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,21 @@
+/* Player.uss */
+
+.inventory-slot {
+    width: 80px;
+    height: 80px;
+    margin: 5px;
+    background-color: rgba(0,0,0,0.2);
+    border-radius: 8px;
+    transition: 0.1s;
+}
+
+.inventory-slot:hover {
+    border-color: white;
+    background-color: rgba(255,255,255,0.1);
+    scale: 1.05;
+}
+
+.key-hint {
+    background-color: rgba(255,255,255,0.9);
+    color: black;
+}

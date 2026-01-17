@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UIElements;
+using System.Collections.Generic;
 
 public class HUDManager : MonoBehaviour
 {
@@ -23,6 +24,10 @@ public class HUDManager : MonoBehaviour
     // Currencies (Placeholder for now)
     private Label goldLabel;
     private Label seedsLabel;
+    
+    // Hotbar
+    private List<VisualElement> hotbarSlots = new List<VisualElement>();
+    private int currentActiveSlot = 1;
 
     private void Awake()
     {
@@ -48,6 +53,21 @@ public class HUDManager : MonoBehaviour
         {
             Debug.LogError("HUDManager: No UIDocument assigned or found!");
         }
+        
+        // Subscribe to KeyboardInputManager events
+        if (KeyboardInputManager.Instance != null)
+        {
+            KeyboardInputManager.Instance.OnHotbarSlotSelected += OnHotbarSlotChanged;
+        }
+    }
+
+    private void OnDisable()
+    {
+        // Unsubscribe from KeyboardInputManager events
+        if (KeyboardInputManager.Instance != null)
+        {
+            KeyboardInputManager.Instance.OnHotbarSlotSelected -= OnHotbarSlotChanged;
+        }
     }
 
     private void InitializeUI()
@@ -57,6 +77,9 @@ public class HUDManager : MonoBehaviour
         healthFill = root.Q<VisualElement>("HealthFill");
         staminaFill = root.Q<VisualElement>("StaminaFill");
         timeLabel = root.Q<Label>("TimeLabel");
+        
+        // Initialize Hotbar slots
+        InitializeHotbar();
         
         // Mini Map connection
         VisualElement mapMask = root.Q<VisualElement>("MapMask");
@@ -69,6 +92,50 @@ public class HUDManager : MonoBehaviour
         UpdateHealth(1f); // 100%
         UpdateStamina(1f); // 100%
         UpdateTime("06:00");
+    }
+    
+    private void InitializeHotbar()
+    {
+        hotbarSlots.Clear();
+        
+        VisualElement hotbarContainer = root.Q<VisualElement>("HotbarContainer");
+        if (hotbarContainer == null) return;
+        
+        // Get all hotbar slots (children with class "hotbar-slot")
+        var slots = hotbarContainer.Query<VisualElement>(className: "hotbar-slot").ToList();
+        hotbarSlots.AddRange(slots);
+        
+        // Set initial active slot
+        UpdateActiveHotbarSlot(1);
+    }
+    
+    private void OnHotbarSlotChanged(int slotNumber)
+    {
+        UpdateActiveHotbarSlot(slotNumber);
+    }
+    
+    /// <summary>
+    /// Updates the visual state of hotbar slots to show which one is active.
+    /// </summary>
+    /// <param name="slotNumber">1-based slot number (1-5)</param>
+    public void UpdateActiveHotbarSlot(int slotNumber)
+    {
+        if (slotNumber < 1 || slotNumber > hotbarSlots.Count) return;
+        
+        currentActiveSlot = slotNumber;
+        
+        for (int i = 0; i < hotbarSlots.Count; i++)
+        {
+            var slot = hotbarSlots[i];
+            if (i == slotNumber - 1)
+            {
+                slot.AddToClassList("active-slot");
+            }
+            else
+            {
+                slot.RemoveFromClassList("active-slot");
+            }
+        }
     }
 
     public void UpdateStamina(float percentage)

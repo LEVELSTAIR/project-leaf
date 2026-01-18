@@ -3,7 +3,19 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Tree
+  - ClayDeposit
+  - Seed
+  - Pot
+  - Plant
+  - AntiPlant
+  - TamedPlant
+  - WaterSource
+  - OxygenBag
+  - Cage
+  - GardenTree
+  - NightSeed
   layers:
   - Default
   - TransparentFX
@@ -11,18 +23,17 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
-  - 
+  - Player
+  - Ground
+  - Interactable
+  - Plant
+  - AntiPlant
+  - TamedPlant
+  - Pot
+  - Decoration
+  - BadLand
+  - SafeZone
+  - Cage
   - 
   - 
   - 

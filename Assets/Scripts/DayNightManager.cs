@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class DayNightManager : MonoBehaviour
 {
+    public static DayNightManager Instance { get; private set; }
+
     [Header("Time Settings")]
     [Tooltip("Length of a full day in real-time minutes")]
     public float dayLengthInMinutes = 20f;
@@ -65,6 +67,16 @@ public class DayNightManager : MonoBehaviour
     private float targetIntensity;
     private Color targetAmbientColor;
 
+    private void Awake()
+    {
+        if (Instance != null && Instance != this)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
+    }
+
     void Start()
     {
         if (!sunLight)
@@ -99,10 +111,17 @@ public class DayNightManager : MonoBehaviour
 
     void AdvanceTime()
     {
-        currentTime += Time.deltaTime * timeScale;
+        float deltaGameHours = Time.deltaTime * timeScale;
+        currentTime += deltaGameHours;
 
         if (currentTime >= 24f)
             currentTime -= 24f;
+
+        // Advance plant growth
+        if (ProjectLeaf.Garden.PlantManager.Instance != null)
+        {
+            ProjectLeaf.Garden.PlantManager.Instance.AdvanceGrowth(deltaGameHours);
+        }
 
         // Format time for UI (HH:mm)
         int hours = Mathf.FloorToInt(currentTime);

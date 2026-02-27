@@ -50,4 +50,9 @@ public class TamingSystem : MonoBehaviour, IInteractable
             if (controller != null) controller.Tame();
         }
     }
+    public void Highlight(bool active)
+    {
+        var highlighter = GetComponent<Highlighter>();
+        if (highlighter != null) highlighter.SetHighlight(active);
+    }
 }

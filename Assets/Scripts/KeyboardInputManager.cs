@@ -93,12 +93,8 @@ public class KeyboardInputManager : MonoBehaviour
             escapeMenuRoot = escapeMenuDocument.rootVisualElement;
             escapeMenuPanel = escapeMenuRoot?.Q<VisualElement>("EscapeMenuPanel");
             
-            // Initially hide the escape menu
-            if (escapeMenuPanel != null)
-            {
-                escapeMenuPanel.style.display = DisplayStyle.None;
-            }
-
+            // Root is hidden by default in UXML. Panel starts with menu-hidden class.
+            
             // Hook up button callbacks
             SetupEscapeMenuCallbacks();
         }
@@ -231,10 +227,11 @@ public class KeyboardInputManager : MonoBehaviour
         isEscapeMenuOpen = !isEscapeMenuOpen;
         OnEscapeMenuToggle?.Invoke();
         
-        if (escapeMenuPanel != null)
+        if (escapeMenuRoot != null && escapeMenuPanel != null)
         {
             if (isEscapeMenuOpen)
             {
+                escapeMenuRoot.style.display = DisplayStyle.Flex;
                 ShowEscapeMenu();
             }
             else
@@ -243,9 +240,10 @@ public class KeyboardInputManager : MonoBehaviour
             }
         }
 
-        // Toggle cursor lock state
-        UnityEngine.Cursor.lockState = isEscapeMenuOpen ? CursorLockMode.None : CursorLockMode.Locked;
-        UnityEngine.Cursor.visible = isEscapeMenuOpen;
+        // Toggle cursor lock state based on all panels
+        bool shouldShowCursor = IsAnyPanelOpen;
+        UnityEngine.Cursor.lockState = shouldShowCursor ? CursorLockMode.None : CursorLockMode.Locked;
+        UnityEngine.Cursor.visible = shouldShowCursor;
 
         Debug.Log($"[Input] Escape Menu toggled: {isEscapeMenuOpen}");
     }
@@ -273,6 +271,7 @@ public class KeyboardInputManager : MonoBehaviour
             if (!isEscapeMenuOpen && escapeMenuPanel != null)
             {
                 escapeMenuPanel.style.display = DisplayStyle.None;
+                if (escapeMenuRoot != null) escapeMenuRoot.style.display = DisplayStyle.None;
             }
         }).StartingIn(300); // Match animation duration
     }

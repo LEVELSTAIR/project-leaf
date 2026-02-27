@@ -32,6 +32,10 @@
     background-color: rgb(255, 180, 50);
 }
 
+.oxygen-fill {
+    background-color: rgb(75, 180, 255);
+}
+
 /* Hotbar */
 .hotbar-slot {
     width: 50px;
@@ -74,3 +78,9 @@
     background-color: rgba(255,255,255,0.8); /* Placeholder */
     border-radius: 4px;
 }
+
+.clock-panel {
+    background-color: rgba(0, 0, 0, 0.45);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+

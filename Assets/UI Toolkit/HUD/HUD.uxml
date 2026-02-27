@@ -27,7 +27,7 @@
             <ui:VisualElement name="TopRightGroup" style="flex-direction: row; align-items: center;">
                 
                 <!-- Clock -->
-                <ui:VisualElement name="ClockContainer" class="glass-panel" style="margin-right: 15px; padding: 10px; justify-content: center; align-items: center;">
+                <ui:VisualElement name="ClockContainer" class="glass-panel clock-panel" style="margin-right: 15px; padding: 10px; justify-content: center; align-items: center;">
                     <ui:Label name="TimeLabel" text="12:00" class="glass-text" style="font-size: 24px; font-style: bold;" />
                 </ui:VisualElement>
 
@@ -53,6 +53,14 @@
                     <ui:Label text="HEALTH" class="glass-text" style="font-size: 12px; margin-bottom: 2px; opacity: 0.8;" />
                     <ui:VisualElement class="bar-background">
                         <ui:VisualElement name="HealthFill" class="bar-fill health-fill" style="width: 80%;" />
+                    </ui:VisualElement>
+                </ui:VisualElement>
+
+                <!-- Oxygen Bar -->
+                <ui:VisualElement name="OxygenGroup" style="margin-bottom: 10px;">
+                    <ui:Label text="OXYGEN" class="glass-text" style="font-size: 12px; margin-bottom: 2px; opacity: 0.8;" />
+                    <ui:VisualElement class="bar-background">
+                        <ui:VisualElement name="OxygenFill" class="bar-fill oxygen-fill" style="width: 100%;" />
                     </ui:VisualElement>
                 </ui:VisualElement>
 

@@ -252,8 +252,32 @@ public class FirstPersonController : MonoBehaviour
             // Clamp pitch between lookAngle
             pitch = Mathf.Clamp(pitch, -maxLookAngle, maxLookAngle);
 
-            transform.localEulerAngles = new Vector3(0, yaw, 0);
-            playerCamera.transform.localEulerAngles = new Vector3(pitch, 0, 0);
+            bool isAnyPanelOpen = KeyboardInputManager.Instance != null && KeyboardInputManager.Instance.IsAnyPanelOpen;
+            bool isControlHeld = Keyboard.current != null && Keyboard.current.ctrlKey.isPressed;
+
+            if (isControlHeld || isAnyPanelOpen)
+            {
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+                
+                // If any panel is open, lock camera look
+                if (!isAnyPanelOpen) 
+                {
+                    transform.localEulerAngles = new Vector3(0, yaw, 0);
+                    playerCamera.transform.localEulerAngles = new Vector3(pitch, 0, 0);
+                }
+                else
+                {
+                    // Any UI panel locks look
+                }
+            }
+            else
+            {
+                Cursor.lockState = CursorLockMode.Locked;
+                Cursor.visible = false;
+                transform.localEulerAngles = new Vector3(0, yaw, 0);
+                playerCamera.transform.localEulerAngles = new Vector3(pitch, 0, 0);
+            }
         }
 
         #region Camera Zoom
@@ -321,8 +345,8 @@ public class FirstPersonController : MonoBehaviour
             }
             else
             {
-                // Regain sprint while not sprinting
-                sprintRemaining = Mathf.Clamp(sprintRemaining += 1 * Time.deltaTime, 0, sprintDuration);
+                // Regain sprint while not sprinting (0-100% in 5 seconds)
+                sprintRemaining = Mathf.Clamp(sprintRemaining += (sprintDuration / 5f) * Time.deltaTime, 0, sprintDuration);
             }
 
             // Handles sprint cooldown 
@@ -401,7 +425,10 @@ public class FirstPersonController : MonoBehaviour
     {
         #region Movement
 
-        if (playerCanMove && moveAction != null)
+        bool isAnyPanelOpen = KeyboardInputManager.Instance != null && KeyboardInputManager.Instance.IsAnyPanelOpen;
+        bool isControlHeld = Keyboard.current != null && Keyboard.current.ctrlKey.isPressed;
+
+        if (playerCanMove && moveAction != null && !isControlHeld && !isAnyPanelOpen)
         {
             // Calculate how fast we should be moving
             Vector2 moveInput = moveAction.action.ReadValue<Vector2>();

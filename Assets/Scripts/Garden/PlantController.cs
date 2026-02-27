@@ -1,7 +1,9 @@
 using UnityEngine;
 
-public class PlantController : MonoBehaviour
+namespace ProjectLeaf.Garden
 {
+    public class PlantController : MonoBehaviour
+    {
     [System.Serializable]
     public struct GrowthStage
     {
@@ -27,11 +29,21 @@ public class PlantController : MonoBehaviour
     // References
     private GameObject currentVisual;
 
-    private void Start()
-    {
-        waterTimer = waterDepletionTime;
-        UpdateVisuals();
-    }
+        private void OnEnable()
+        {
+            PlantManager.Instance?.RegisterPlant(this);
+        }
+
+        private void OnDisable()
+        {
+            PlantManager.Instance?.UnregisterPlant(this);
+        }
+
+        private void Start()
+        {
+            waterTimer = waterDepletionTime;
+            UpdateVisuals();
+        }
 
     private void Update()
     {
@@ -104,10 +116,22 @@ public class PlantController : MonoBehaviour
         }
     }
 
-    private void Die()
-    {
-        isDead = true;
-        NotificationManager.Instance?.ShowNotification($"{plantName} has died.");
-        // Change visual to dead plant
+        private void Die()
+        {
+            isDead = true;
+            NotificationManager.Instance?.ShowNotification($"{plantName} has died.");
+            // Change visual to dead plant
+        }
+
+        public void UpdateGrowth(float gameHours)
+        {
+            if (isDead) return;
+
+            // Convert game hours to simulation seconds if needed, 
+            // but here we might just want to advance growth by a "tick"
+            // Let's assume gameHours is the amount of in-game time passed.
+            HandleWaterAndGrowth(gameHours * 3600f); // Assuming gameHours is real hours? 
+            // Or maybe just use the Delta provided.
+        }
     }
 }

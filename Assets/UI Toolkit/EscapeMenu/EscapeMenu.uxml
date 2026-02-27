@@ -3,7 +3,7 @@
     <ui:Style src="EscapeMenu.uss" />
     
     <!-- Full Screen Root - Click outside to close -->
-    <ui:VisualElement name="EscapeMenuRoot" picking-mode="Ignore" class="escape-menu-root">
+    <ui:VisualElement name="EscapeMenuRoot" picking-mode="Ignore" class="escape-menu-root" style="display: none;">
         
         <!-- Semi-transparent overlay on the left 3/4 -->
         <ui:VisualElement name="OverlayBackground" class="overlay-background" />

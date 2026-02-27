@@ -9,10 +9,7 @@ public class OxygenZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // PlayerOxygenController oxygen = other.GetComponent<PlayerOxygenController>();
-            // if (oxygen != null) oxygen.Refill(oxygenRegenRate * Time.deltaTime);
-            
-            // Visual feedback?
+            PlayerStatsManager.Instance?.SetInSafeZone(true);
         }
     }
     
@@ -21,6 +18,15 @@ public class OxygenZone : MonoBehaviour
         if (other.CompareTag("Player"))
         {
              NotificationManager.Instance?.ShowNotification("Entered Safe Zone.");
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            PlayerStatsManager.Instance?.SetInSafeZone(false);
+            NotificationManager.Instance?.ShowNotification("Leaving Safe Zone...");
         }
     }
 }

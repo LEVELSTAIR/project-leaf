@@ -54,17 +54,25 @@ namespace ProjectLeaf.Player
                     if (currentInteractable != interactable)
                     {
                         currentInteractable = interactable;
-                        // TODO: Trigger UI prompt update
+                        PlayerUIManager.Instance?.ShowInteractionPrompt(currentInteractable.InteractionPrompt);
                         Debug.Log($"Can interact with: {currentInteractable.InteractionPrompt}");
                     }
                 }
                 else
                 {
+                    if (currentInteractable != null)
+                    {
+                        PlayerUIManager.Instance?.HideInteractionPrompt();
+                    }
                     currentInteractable = null;
                 }
             }
             else
             {
+                if (currentInteractable != null)
+                {
+                    PlayerUIManager.Instance?.HideInteractionPrompt();
+                }
                 currentInteractable = null;
             }
         }

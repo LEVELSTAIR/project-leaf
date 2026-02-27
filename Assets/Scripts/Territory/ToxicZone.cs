@@ -10,11 +10,16 @@ public class ToxicZone : MonoBehaviour
     {
         if (other.CompareTag("Player"))
         {
-            // Check for Oxygen Bag?
-            // PlayerHealthController health = other.GetComponent<PlayerHealthController>();
-            // if (health != null) health.TakeDamage(damagePerSecond * Time.deltaTime);
-            
+            PlayerStatsManager.Instance?.SetInBadLands(true);
             NotificationManager.Instance?.ShowNotification("WARNING: In BadLands! Oxygen Dropping.", 0.1f);
+        }
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("Player"))
+        {
+            PlayerStatsManager.Instance?.SetInBadLands(false);
         }
     }
 }

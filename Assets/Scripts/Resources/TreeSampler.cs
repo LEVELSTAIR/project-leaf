@@ -49,4 +49,9 @@ public class TreeSampler : MonoBehaviour, IInteractable
             NotificationManager.Instance?.ShowNotification("You found a seed!");
         }
     }
+    public void Highlight(bool active)
+    {
+        var highlighter = GetComponent<Highlighter>();
+        if (highlighter != null) highlighter.SetHighlight(active);
+    }
 }

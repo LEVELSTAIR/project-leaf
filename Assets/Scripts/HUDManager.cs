@@ -17,6 +17,7 @@ public class HUDManager : MonoBehaviour
     // Status Bars
     private VisualElement healthFill;
     private VisualElement staminaFill;
+    private VisualElement oxygenFill;
     
     // Clock
     private Label timeLabel;
@@ -76,6 +77,7 @@ public class HUDManager : MonoBehaviour
 
         healthFill = root.Q<VisualElement>("HealthFill");
         staminaFill = root.Q<VisualElement>("StaminaFill");
+        oxygenFill = root.Q<VisualElement>("OxygenFill");
         timeLabel = root.Q<Label>("TimeLabel");
         
         // Initialize Hotbar slots
@@ -91,6 +93,7 @@ public class HUDManager : MonoBehaviour
         // Initial set
         UpdateHealth(1f); // 100%
         UpdateStamina(1f); // 100%
+        UpdateOxygen(1f); // 100%
         UpdateTime("06:00");
     }
     
@@ -162,6 +165,15 @@ public class HUDManager : MonoBehaviour
         if (timeLabel != null)
         {
             timeLabel.text = timeString;
+        }
+    }
+
+    public void UpdateOxygen(float percentage)
+    {
+        if (oxygenFill != null)
+        {
+            float pct = Mathf.Clamp01(percentage);
+            oxygenFill.style.width = Length.Percent(pct * 100f);
         }
     }
 }

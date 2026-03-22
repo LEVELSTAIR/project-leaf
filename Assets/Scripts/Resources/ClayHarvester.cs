@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using ProjectLeaf.Interfaces;
 
 public class ClayHarvester : MonoBehaviour, IInteractable
@@ -31,10 +32,18 @@ public class ClayHarvester : MonoBehaviour, IInteractable
         yield return new WaitForSeconds(harvestTime);
 
         currentHarvests++;
-        NotificationManager.Instance?.ShowNotification($"Collected {amountPerHarvest} Clay!");
-
-        // Add to inventory (Placeholder)
-        // InventoryManager.Instance.AddItem("Clay", amountPerHarvest);
+        
+        // Add clay to inventory
+        if (InventoryManager.Instance != null)
+        {
+            InventoryManager.Instance.AddItem("Clay", ItemType.Material, amountPerHarvest);
+            string message = $"Collected {amountPerHarvest} Clay!";
+            if (HUDManager.Instance != null)
+            {
+                HUDManager.Instance.ShowMessage(message, 2f);
+            }
+            Debug.Log(message);
+        }
 
         if (currentHarvests >= maxHarvests)
         {
@@ -42,6 +51,7 @@ public class ClayHarvester : MonoBehaviour, IInteractable
             GetComponent<Renderer>().material.color = Color.gray;
         }
     }
+
     public void Highlight(bool active)
     {
         var highlighter = GetComponent<Highlighter>();

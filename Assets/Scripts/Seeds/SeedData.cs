@@ -1,15 +1,13 @@
 using UnityEngine;
 
-namespace ProjectLeaf.Data
+[CreateAssetMenu(fileName = "New Seed", menuName = "Inventory/Seed")]
+public class SeedData : ScriptableObject
 {
-    [CreateAssetMenu(fileName = "NewSeedData", menuName = "Project Leaf/Seed Data")]
-    public class SeedData : ScriptableObject
-    {
-        public string seedName;
-        public Sprite icon;
-        public PlantData plantToGrow;
-        public bool isNightSeed;
-        [Range(0, 1)]
-        public float antiPlantChance = 0.5f; // 50% for night seeds as per design
-    }
+    public string seedName;
+    public string seedCount;
+    public Sprite icon;
+    public int basePrice;
+    public float growthTime;
+    public int harvestYield;
+    public GameObject plantPrefab;
 }

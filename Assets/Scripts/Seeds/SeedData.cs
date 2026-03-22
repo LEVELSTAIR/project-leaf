@@ -10,4 +10,5 @@ public class SeedData : ScriptableObject
     public float growthTime;
     public int harvestYield;
     public GameObject plantPrefab;
+
 }

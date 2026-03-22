@@ -616,4 +616,5 @@ public class HUDManager : MonoBehaviour
         }
         return false;
     }
+
 }

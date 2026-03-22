@@ -1,28 +1,22 @@
-<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+﻿<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
     <ui:Style src="../GlassTheme.uss" />
     <ui:Style src="Player.uss" />
     
     <ui:VisualElement name="Root" picking-mode="Ignore" style="flex-grow: 1; justify-content: center; align-items: center;">
         
         <!-- Inventory (Initially Hidden) -->
-        <!-- Toggle 'display: none' in code or uss to hide/show -->
-        <ui:VisualElement name="InventoryPanel" class="glass-panel" style="width: 500px; height: 400px; display: none; justify-content: flex-start;">
+        <ui:VisualElement name="InventoryPanel" class="glass-panel" style="width: 600px; height: 500px; display: none; justify-content: flex-start; padding: 20px;">
             <ui:Label text="INVENTORY" class="glass-text" style="font-size: 24px; margin-bottom: 20px; align-self: center;" />
-            <ui:ScrollView>
-                <ui:VisualElement class="inventory-grid" style="flex-direction: row; flex-wrap: wrap; justify-content: center;">
-                    <!-- Example Slots -->
-                    <ui:VisualElement class="inventory-slot glass-panel" />
-                    <ui:VisualElement class="inventory-slot glass-panel" />
-                    <ui:VisualElement class="inventory-slot glass-panel" />
-                    <ui:VisualElement class="inventory-slot glass-panel" />
-                    <ui:VisualElement class="inventory-slot glass-panel" />
-                    <ui:VisualElement class="inventory-slot glass-panel" />
-                    <ui:VisualElement class="inventory-slot glass-panel" />
-                    <ui:VisualElement class="inventory-slot glass-panel" />
-                    <ui:VisualElement class="inventory-slot glass-panel" />
-                    <ui:VisualElement class="inventory-slot glass-panel" />
-                </ui:VisualElement>
+            <ui:ScrollView style="flex-grow: 1;">
+                <ui:VisualElement name="InventoryGrid" class="inventory-grid" style="flex-direction: row; flex-wrap: wrap; justify-content: flex-start; align-content: flex-start;" />
             </ui:ScrollView>
+            
+            <!-- Optional: Stats panel -->
+            <ui:VisualElement style="margin-top: 15px; padding-top: 10px; border-top-width: 1px; border-top-color: rgba(255,255,255,0.2); flex-direction: row; justify-content: space-between;">
+                <ui:Label name="GoldTotal" text="💰 Gold: 0" style="font-size: 14px;" />
+                <ui:Label name="WaterTotal" text="💧 Water: 0" style="font-size: 14px;" />
+                <ui:Label name="ItemsTotal" text="📦 Items: 0" style="font-size: 14px;" />
+            </ui:VisualElement>
         </ui:VisualElement>
 
         <!-- Interaction Prompt (Contextual) -->

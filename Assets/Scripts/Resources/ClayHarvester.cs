@@ -57,4 +57,6 @@ public class ClayHarvester : MonoBehaviour, IInteractable
         var highlighter = GetComponent<Highlighter>();
         if (highlighter != null) highlighter.SetHighlight(active);
     }
+
 }
+

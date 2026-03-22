@@ -284,4 +284,5 @@ public class InventoryManager : MonoBehaviour
         OnInventoryChanged?.Invoke();
         UpdateUI();
     }
+
 }

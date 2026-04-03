@@ -22,6 +22,9 @@ public class KeyboardInputManager : MonoBehaviour
     public event Action OnCraftToggle;                // C key
     public event Action OnEscapeMenuToggle;           // ESC key
 
+    // Inventory debug events
+    public event Action GetSeedsDebug;              // K key (for testing)
+
     // Hotbar Events
     public event Action<int> OnHotbarSlotSelected;    // 1-5 keys
     #endregion
@@ -36,6 +39,7 @@ public class KeyboardInputManager : MonoBehaviour
     public Key mapEnlargeKey = Key.M;
     public Key craftKey = Key.C;
     public Key escapeMenuKey = Key.Escape;
+    public Key getSeedsDebugKey = Key.K; // For testing seed collection
 
     [Header("Hotbar Keybindings")]
     public Key hotbarSlot1 = Key.Digit1;
@@ -173,6 +177,22 @@ public class KeyboardInputManager : MonoBehaviour
         if (WasKeyPressedThisFrame(escapeMenuKey))
         {
             ToggleEscapeMenu();
+        }
+
+        if (WasKeyPressedThisFrame(getSeedsDebugKey))
+        {
+            GetSeedsDebug?.Invoke();
+            Debug.Log("[Input] Get Seeds Debug pressed");
+            // For testing: Log all seed data in inventory
+            if (SeedManager.Instance != null)
+            {
+                    var seeds = SeedManager.Instance.GetAllSeedData();
+                foreach (var kv in seeds)
+                {
+                    Debug.Log($"<color=yellow>Seed: {kv.Key} — Count: {kv.Value}</color>");
+                }
+            }
+
         }
     }
 

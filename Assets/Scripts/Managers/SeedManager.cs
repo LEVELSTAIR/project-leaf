@@ -53,4 +53,15 @@ public class SeedManager : MonoBehaviour
         return 0;
     }
 
+    // This method can be used to get a summary of all seeds in the inventory
+    public Dictionary<string, int> GetAllSeedData()
+    {
+        if (InventoryManager.Instance != null)
+        {
+            return InventoryManager.Instance.GetAllSeeds();
+        }
+
+        return new Dictionary<string, int>();
+    }
+
 }

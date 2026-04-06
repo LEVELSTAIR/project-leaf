@@ -189,7 +189,7 @@ public class KeyboardInputManager : MonoBehaviour
                     var seeds = SeedManager.Instance.GetAllSeedData();
                 foreach (var kv in seeds)
                 {
-                    Debug.Log($"<color=yellow>Seed: {kv.Key} — Count: {kv.Value}</color>");
+                    Debug.Log($"<color=yellow>Seed: {kv}");
                 }
             }
 

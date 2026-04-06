@@ -10,12 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0652e3617e72ad8418d74661395e62b1, type: 3}
-  m_Name: CornSeed
+  m_Name: New Seed
   m_EditorClassIdentifier: Assembly-CSharp::SeedData
-  seedName: Corn
-  seedCount: 8
-  icon: {fileID: 0}
-  basePrice: 0
-  growthTime: 0
-  harvestYield: 0
-  plantPrefab: {fileID: 0}
+  seedName: 
+  seedIcon: {fileID: 0}
+  growthTime: 60
+  harvestYield: 1
+  harvestItemName: 
+  harvestItemType: 0
+  seedlingPrefab: {fileID: 0}
+  maturePlantPrefab: {fileID: 0}

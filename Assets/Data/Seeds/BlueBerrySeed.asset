@@ -10,12 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 0652e3617e72ad8418d74661395e62b1, type: 3}
-  m_Name: AcornSeed
+  m_Name: BlueBerrySeed
   m_EditorClassIdentifier: Assembly-CSharp::SeedData
-  seedName: Acorn
-  seedCount: 6
-  icon: {fileID: 0}
-  basePrice: 0
-  growthTime: 0
-  harvestYield: 0
-  plantPrefab: {fileID: 0}
+  seedName: BlueBerry
+  seedIcon: {fileID: 0}
+  growthTime: 15
+  harvestYield: 10
+  harvestItemName: Seed
+  harvestItemType: 0
+  seedlingPrefab: {fileID: 1891901838137653615, guid: b65e75c4eb13b224f97fe6911678b047, type: 3}
+  maturePlantPrefab: {fileID: 7730201663343360792, guid: fb1b9f65926fdfd469c068fc5ec28b83, type: 3}

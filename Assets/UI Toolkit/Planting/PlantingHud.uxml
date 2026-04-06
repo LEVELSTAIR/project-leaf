@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="Unity.UI.Builder" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/GlassTheme.uss?fileID=7433441132597879392&amp;guid=03998e6826707b944954e041c886f580&amp;type=3#GlassTheme"/>
+    <ui:VisualElement name="PlantingPanel" class="glass-panel" style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; justify-content: center; align-items: center; display: none;">
+        <ui:VisualElement class="glass-panel" style="width: 800px; height: 500px; background-color: rgba(0, 0, 0, 0.34); border-radius: 20px; border-width: 2px; border-color: rgba(255, 255, 255, 0.3); padding: 20px; flex-direction: column;">
+            <ui:Label text="Select a Seed to Plant" style="font-size: 28px; color: rgb(255, 255, 255); -unity-font-style: bold; margin-bottom: 20px; align-self: center;"/>
+            <ui:ScrollView style="flex-grow: 1;">
+                <ui:VisualElement name="SeedContainer" style="flex-direction: row; flex-wrap: wrap; justify-content: center; align-items: center;"/>
+            </ui:ScrollView>
+            <ui:Button text="✕" name="CloseButton" class="glass-button" style="position: absolute; top: 10px; right: 10px; width: 40px; height: 40px; font-size: 20px; background-color: rgb(200, 50, 50); border-top-left-radius: 100px; border-top-right-radius: 100px; border-bottom-right-radius: 100px; border-bottom-left-radius: 100px;"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

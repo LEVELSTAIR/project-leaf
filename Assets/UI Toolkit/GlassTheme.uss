@@ -42,14 +42,20 @@
     border-radius: 8px;
     color: white;
     transition: 0.2s;
+    width: 150px;
+    height: 150px;
+    margin: 10px;
+    white-space: normal;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .glass-button:hover {
     background-color: rgba(255, 255, 255, 0.3);
-    scale: 1.05;
 }
 
 .glass-button:active {
     background-color: rgba(255, 255, 255, 0.1);
-    scale: 0.95;
 }

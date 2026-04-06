@@ -75,6 +75,7 @@ public class InventoryManager : MonoBehaviour
                     seeds[itemName] += amount;
                 else
                     seeds[itemName] = amount;
+                Debug.Log($"[InventoryManager] Seed stored: '{itemName}' = {seeds[itemName]}");
                 break;
             case ItemType.Material:
                 if (itemName.ToLower() == "clay")
@@ -272,6 +273,26 @@ public class InventoryManager : MonoBehaviour
     public Dictionary<string, int> GetAllSeeds()
     {
         return new Dictionary<string, int>(seeds);
+    }
+
+    /// <summary>
+    /// Debug method to log all seeds in inventory
+    /// </summary>
+    public void DebugLogAllSeeds()
+    {
+        Debug.Log("[InventoryManager] === SEED INVENTORY DEBUG ===");
+        if (seeds.Count == 0)
+        {
+            Debug.Log("[InventoryManager] No seeds in inventory!");
+        }
+        else
+        {
+            foreach (var kvp in seeds)
+            {
+                Debug.Log($"[InventoryManager] Seed: '{kvp.Key}' Count: {kvp.Value}");
+            }
+        }
+        Debug.Log("[InventoryManager] === END DEBUG ===");
     }
 
     public void ClearInventory()

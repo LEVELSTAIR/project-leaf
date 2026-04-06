@@ -146,7 +146,12 @@ public class PlayerUIManager : MonoBehaviour
         {
             RebuildInventoryGrid(currentItems);
             lastItemCount = currentItems.Count;
-            lastItems = new List<InventoryItem>(currentItems);
+            // Create deep copies of inventory items to avoid reference issues
+            lastItems = new List<InventoryItem>();
+            foreach (var item in currentItems)
+            {
+                lastItems.Add(new InventoryItem(item.itemType, item.itemName, item.amount, item.icon));
+            }
         }
     }
 

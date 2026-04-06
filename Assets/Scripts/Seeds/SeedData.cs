@@ -1,14 +1,16 @@
+// SeedData.cs
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "New Seed", menuName = "Inventory/Seed")]
+[CreateAssetMenu(fileName = "New Seed", menuName = "Farming/Seed Data")]
 public class SeedData : ScriptableObject
 {
     public string seedName;
-    public string seedCount;
-    public Sprite icon;
-    public int basePrice;
-    public float growthTime;
-    public int harvestYield;
-    public GameObject plantPrefab;
+    public Sprite seedIcon;
+    public float growthTime = 60f; // in seconds
+    public int harvestYield = 1;
+    public string harvestItemName;
+    public ItemType harvestItemType;
+    public GameObject seedlingPrefab;
+    public GameObject maturePlantPrefab;
 
 }

@@ -59,7 +59,8 @@ public class SeedTree : MonoBehaviour, IInteractable
             }
 
             // PlayerInteraction now uses F for collect
-            return $"Press F to collect {seedAmount} {seedType}(s) from {treeName}";
+            int yieldAmount = seedData != null ? seedData.harvestYield : seedAmount;
+            return $"Press F to collect {yieldAmount} {seedType}(s) from {treeName}";
         }
     }
 
@@ -165,9 +166,9 @@ public class SeedTree : MonoBehaviour, IInteractable
 
     private void CollectSeeds()
     {
-        // Use SeedData if assigned, otherwise fallback to seedType/seedAmount
-        string nameToAdd = seedData != null ? seedData.seedName : seedType;
-        int amountToAdd = seedData != null ? seedData.harvestYield : seedAmount;
+        // Use SeedTreeData if assigned, otherwise fallback to seedType/seedAmount
+        string nameToAdd = seedData != null ? seedType : seedData.seedName;
+        int amountToAdd = seedData != null ? seedAmount : seedData.harvestYield;
 
         if (SeedManager.Instance != null)
         {

@@ -32,6 +32,7 @@ public class SeedManager : MonoBehaviour
     {
         if (InventoryManager.Instance != null)
         {
+            Debug.Log($"[SeedManager] AddSeeds called: '{seedName}' x{amount}. InventoryMgr exists: {InventoryManager.Instance != null}");
             InventoryManager.Instance.AddItem(seedName, ItemType.Seed, amount);
         }
     }
@@ -61,7 +62,7 @@ public class SeedManager : MonoBehaviour
             return InventoryManager.Instance.GetAllSeeds();
         }
 
-        return new Dictionary<string, int>();
+        return new Dictionary<string, int> { { "Nodata", 0 } };
     }
 
 }

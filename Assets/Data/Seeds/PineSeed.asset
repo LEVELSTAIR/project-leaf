@@ -1,0 +1,22 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0652e3617e72ad8418d74661395e62b1, type: 3}
+  m_Name: PineSeed
+  m_EditorClassIdentifier: Assembly-CSharp::SeedData
+  seedName: Pine
+  seedIcon: {fileID: 0}
+  growthTime: 15
+  harvestYield: 10
+  harvestItemName: Seed
+  harvestItemType: 0
+  seedlingPrefab: {fileID: 2173637093521219903, guid: bf8b0f4b59c292a459ed54ff400f7d65, type: 3}
+  maturePlantPrefab: {fileID: 6971673183582946558, guid: 8326860c8f3855147a7af6db3700b171, type: 3}

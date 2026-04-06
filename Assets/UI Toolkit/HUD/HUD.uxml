@@ -17,7 +17,7 @@
             <ui:VisualElement name="InventoryPanel" class="glass-panel" style="height: auto; min-width: 150px; padding: 10px;">
                 <ui:Label name="GoldLabel" text="💰 Gold: 0" style="margin-bottom: 5px;"/>
                 <ui:Label name="WaterLabel" text="💧 Water: 0" style="margin-bottom: 5px;"/>
-                <ui:VisualElement name="SeedsContainer" style="margin-top: 5px;"/>
+                <ui:VisualElement name="SeedsContainer" style="margin-top: 5px; display: none;"/>
             </ui:VisualElement>
             <ui:VisualElement name="TopRightGroup" style="flex-direction: row; align-items: center;">
                 <ui:VisualElement name="ClockContainer" class="glass-panel clock-panel" style="margin-right: 15px; padding: 10px; justify-content: center; align-items: center; position: absolute; top: 5px; left: -108px;">

@@ -125,6 +125,7 @@ public class KeyboardInputManager : MonoBehaviour
         {
             isInventoryOpen = !isInventoryOpen;
             OnInventoryToggle?.Invoke();
+            UpdateCursorState();
             Debug.Log($"[Input] Inventory toggled: {isInventoryOpen}");
         }
 
@@ -154,6 +155,7 @@ public class KeyboardInputManager : MonoBehaviour
         {
             isBookLogOpen = !isBookLogOpen;
             OnBookLogToggle?.Invoke();
+            UpdateCursorState();
             Debug.Log($"[Input] Book Log toggled: {isBookLogOpen}");
         }
 
@@ -162,6 +164,7 @@ public class KeyboardInputManager : MonoBehaviour
         {
             isMapEnlarged = !isMapEnlarged;
             OnMapEnlarge?.Invoke();
+            UpdateCursorState();
             Debug.Log($"[Input] Map Enlarged toggled: {isMapEnlarged}");
         }
 
@@ -170,6 +173,7 @@ public class KeyboardInputManager : MonoBehaviour
         {
             isCraftOpen = !isCraftOpen;
             OnCraftToggle?.Invoke();
+            UpdateCursorState();
             Debug.Log($"[Input] Craft toggled: {isCraftOpen}");
         }
 
@@ -260,12 +264,21 @@ public class KeyboardInputManager : MonoBehaviour
             }
         }
 
-        // Toggle cursor lock state based on all panels
-        bool shouldShowCursor = IsAnyPanelOpen;
-        UnityEngine.Cursor.lockState = shouldShowCursor ? CursorLockMode.None : CursorLockMode.Locked;
-        UnityEngine.Cursor.visible = shouldShowCursor;
+        UpdateCursorState();
 
         Debug.Log($"[Input] Escape Menu toggled: {isEscapeMenuOpen}");
+    }
+
+    /// <summary>
+    /// Updates cursor visibility and lock state based on whether any panel is open.
+    /// </summary>
+    private void UpdateCursorState()
+    {
+        bool isCurrentlyPlacing = CraftingController.Instance != null && CraftingController.Instance.IsCurrentlyPlacing();
+        bool shouldShowCursor = IsAnyPanelOpen && !isCurrentlyPlacing;
+        UnityEngine.Cursor.lockState = shouldShowCursor ? CursorLockMode.None : CursorLockMode.Locked;
+        UnityEngine.Cursor.visible = shouldShowCursor;
+        Debug.Log($"[Input] Cursor state updated - Visible: {shouldShowCursor}, Lock: {UnityEngine.Cursor.lockState}");
     }
 
     private void ShowEscapeMenu()
@@ -401,6 +414,28 @@ public class KeyboardInputManager : MonoBehaviour
         if (isEscapeMenuOpen)
         {
             CloseEscapeMenu();
+        }
+        UpdateCursorState();
+    }
+
+    /// <summary>
+    /// Syncs the cursor state based on panel states. Call this if external systems change cursor state.
+    /// </summary>
+    public void SyncCursorState()
+    {
+        UpdateCursorState();
+    }
+
+    /// <summary>
+    /// Set the craft open state directly. Used when external systems control crafting UI.
+    /// </summary>
+    public void SetCraftOpen(bool open)
+    {
+        if (isCraftOpen != open)
+        {
+            isCraftOpen = open;
+            UpdateCursorState();
+            Debug.Log($"[Input] Craft state set to: {isCraftOpen}");
         }
     }
     #endregion

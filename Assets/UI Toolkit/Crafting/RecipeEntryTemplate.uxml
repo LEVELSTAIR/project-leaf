@@ -1,0 +1,9 @@
+<UXML xmlns="UnityEngine.UIElements">
+<Style src="CraftingStyles.uss" />
+<VisualElement class="recipe-entry">
+        <VisualElement name="recipe-icon" class="recipe-icon" />
+        <Label name="recipe-name" class="recipe-name" />
+        <Label name="requirements" class="recipe-requirements" />
+        <Button name="craft-button" text="Craft" class="craft-button" />
+    </VisualElement>
+</UXML>

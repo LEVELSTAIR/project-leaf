@@ -201,7 +201,6 @@ public class HUDManager : MonoBehaviour
         // Try to find existing UI elements
         goldDisplayLabel = root.Q<Label>("GoldLabel");
         waterDisplayLabel = root.Q<Label>("WaterLabel");
-        clayDisplayLabel = root.Q<Label>("ClayLabel");
         seedsContainer = root.Q<VisualElement>("SeedsContainer");
 
         // Create default gold display if not found
@@ -248,29 +247,6 @@ public class HUDManager : MonoBehaviour
             waterDisplayLabel.style.borderBottomLeftRadius = 5;
             waterDisplayLabel.style.borderBottomRightRadius = 5;
             root.Add(waterDisplayLabel);
-        }
-
-        // Create default clay display if not found
-        if (clayDisplayLabel == null)
-        {
-            clayDisplayLabel = new Label("🪨 Clay: 0");
-            clayDisplayLabel.name = "ClayLabel";
-            clayDisplayLabel.style.position = Position.Absolute;
-            clayDisplayLabel.style.top = 80;
-            clayDisplayLabel.style.right = 10;
-            clayDisplayLabel.style.color = new Color(0.8f, 0.7f, 0.6f);
-            clayDisplayLabel.style.fontSize = 16;
-            clayDisplayLabel.style.unityFontStyleAndWeight = FontStyle.Bold;
-            clayDisplayLabel.style.backgroundColor = new Color(0, 0, 0, 0.6f);
-            clayDisplayLabel.style.paddingTop = 5;
-            clayDisplayLabel.style.paddingBottom = 5;
-            clayDisplayLabel.style.paddingLeft = 10;     // Fixed: paddingLeft (lowercase)
-            clayDisplayLabel.style.paddingRight = 10;    // Fixed: paddingRight (lowercase)
-            clayDisplayLabel.style.borderTopLeftRadius = 5;
-            clayDisplayLabel.style.borderTopRightRadius = 5;
-            clayDisplayLabel.style.borderBottomLeftRadius = 5;
-            clayDisplayLabel.style.borderBottomRightRadius = 5;
-            root.Add(clayDisplayLabel);
         }
 
         // Create default seeds container if not found

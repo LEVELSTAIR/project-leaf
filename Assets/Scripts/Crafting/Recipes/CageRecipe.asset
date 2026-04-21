@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e6988e98d4a5bfb40b0b2504676ddfe4, type: 3}
-  m_Name: PotRecipe
+  m_Name: CageRecipe
   m_EditorClassIdentifier: Assembly-CSharp::CraftingRecipe
-  recipeName: Clay Pot
+  recipeName: Cage
   icon: {fileID: 0}
-  resultPrefab: {fileID: 6402528771539139829, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
+  resultPrefab: {fileID: 577903359999689899, guid: 228c353b07851b34dbf3e6a3e185ae30, type: 3}
   parentTransform: {fileID: 0}
   requiredResources:
-  - itemName: clay
-    itemType: 6
+  - itemName: wood
+    itemType: 5
     amount: 2
-  description: Clay Pot
+  description: Recipe for cages

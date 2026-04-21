@@ -279,7 +279,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   showDebugRay: 1
-  showDebugMessages: 1
+  showDebugMessages: 0
   rayColor: {r: 0, g: 1, b: 0, a: 1}
   hitColor: {r: 1, g: 0, b: 0, a: 1}
   rayDuration: 0
@@ -1557,9 +1557,6 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
-    - targetCorrespondingSourceObject: {fileID: 4459864850019384750, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 901816868}
     - targetCorrespondingSourceObject: {fileID: 4459864851310106424, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
       insertIndex: -1
       addedObject: {fileID: 51681109}
@@ -3627,32 +3624,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2807260281128564572, guid: 5852d7bbf180ce54f8f509e952627187, type: 3}
   m_PrefabInstance: {fileID: 874503983}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &901816861 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 4459864850019384750, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
-  m_PrefabInstance: {fileID: 335856720}
-  m_PrefabAsset: {fileID: 0}
---- !u!114 &901816868
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 901816861}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c3c60a72fc57c5244b4fafba2796babe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerInteraction
-  interactionDistance: 4
-  interactionLayer:
-    serializedVersion: 2
-    m_Bits: 256
-  showDebugRay: 1
-  showDebugMessages: 1
-  rayColor: {r: 0, g: 1, b: 0, a: 1}
-  hitColor: {r: 1, g: 0, b: 0, a: 1}
-  rayDuration: 0
 --- !u!1 &910532046
 GameObject:
   m_ObjectHideFlags: 0
@@ -3740,6 +3711,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 468342561457169314, guid: 8326860c8f3855147a7af6db3700b171, type: 3}
+      propertyPath: seedType
+      value: Pine
+      objectReference: {fileID: 0}
     - target: {fileID: 468342561457169314, guid: 8326860c8f3855147a7af6db3700b171, type: 3}
       propertyPath: highlightMaterial
       value: 
@@ -5740,6 +5715,7 @@ MonoBehaviour:
   uiDocument: {fileID: 299780365}
   recipesToDisplay:
   - {fileID: 11400000, guid: 9930619e5eed82b4399b3ec33ac8cc02, type: 2}
+  - {fileID: 11400000, guid: 84122d1f44df91148911c8642e570613, type: 2}
 --- !u!114 &1736654338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5754,6 +5730,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CraftingController
   availableRecipes:
   - {fileID: 11400000, guid: 9930619e5eed82b4399b3ec33ac8cc02, type: 2}
+  - {fileID: 11400000, guid: 84122d1f44df91148911c8642e570613, type: 2}
   placementMask:
     serializedVersion: 2
     m_Bits: 128
@@ -6487,6 +6464,11 @@ MonoBehaviour:
   maxWaterStack: 999
   maxSeedStack: 5
   defaultMaxStack: 99
+  autoFillTestData: 1
+  testGoldAmount: 500
+  testWaterAmount: 300
+  testClayAmount: 200
+  testWoodAmount: 150
 --- !u!1001 &2028504976
 PrefabInstance:
   m_ObjectHideFlags: 0

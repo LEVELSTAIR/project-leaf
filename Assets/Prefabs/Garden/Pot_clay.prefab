@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1365260592802022805}
-  m_Layer: 12
+  m_Layer: 8
   m_Name: PlantSpawnPoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 2459384273240943589}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.288, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -41,7 +41,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4610808184838864984}
   - component: {fileID: 8851669035434770669}
-  m_Layer: 12
+  - component: {fileID: 314466780608117165}
+  - component: {fileID: -5061355271356127568}
+  m_Layer: 8
   m_Name: Pot_clay
   m_TagString: Pot
   m_Icon: {fileID: 0}
@@ -87,6 +89,75 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.6, y: 0.5, z: 0.6}
   m_Center: {x: 0, y: 0.2679758, z: 0}
+--- !u!23 &314466780608117165
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6402528771539139829}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_ForceMeshLod: -1
+  m_MeshLodSelectionBias: 0
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 0}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 1
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_GlobalIlluminationMeshLod: 0
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_MaskInteraction: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!114 &-5061355271356127568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6402528771539139829}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 182fa5bd9e2d01b4da8a73895678d023, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlantPot
+  isPlanted: 0
+  plantedSeedData: {fileID: 0}
+  currentPlant: {fileID: 0}
+  currentGrowthTime: 0
+  isReadyToHarvest: 0
+  highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
+  potRenderer: {fileID: 8633624795194145752}
+  plantSpawnPoint: {fileID: 1365260592802022805}
 --- !u!1 &6566731506901460173
 GameObject:
   m_ObjectHideFlags: 0
@@ -97,7 +168,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5424594963968624954}
   - component: {fileID: 6048962814172426590}
-  m_Layer: 12
+  m_Layer: 8
   m_Name: Script
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -131,7 +202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36cbb5d2d11c4654691d8095386d90bd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ProjectLeaf.Garden.PotController
-  plantSpawnPoint: {fileID: 0}
+  plantSpawnPoint: {fileID: 1365260592802022805}
   currentPlant: {fileID: 0}
 --- !u!1001 &9064467275745477292
 PrefabInstance:
@@ -141,9 +212,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 4610808184838864984}
     m_Modifications:
+    - target: {fileID: -6186004547616471771, guid: 41f145dd85aadc946851d4276e9f2797, type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
     - target: {fileID: -293203802875518696, guid: 41f145dd85aadc946851d4276e9f2797, type: 3}
       propertyPath: m_Name
       value: Pot C Small
+      objectReference: {fileID: 0}
+    - target: {fileID: -293203802875518696, guid: 41f145dd85aadc946851d4276e9f2797, type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7881466077556996133, guid: 41f145dd85aadc946851d4276e9f2797, type: 3}
       propertyPath: m_LocalPosition.x
@@ -193,5 +272,10 @@ PrefabInstance:
 --- !u!4 &1201303683978312329 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7881466077556996133, guid: 41f145dd85aadc946851d4276e9f2797, type: 3}
+  m_PrefabInstance: {fileID: 9064467275745477292}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &8633624795194145752 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 728379123155302772, guid: 41f145dd85aadc946851d4276e9f2797, type: 3}
   m_PrefabInstance: {fileID: 9064467275745477292}
   m_PrefabAsset: {fileID: 0}

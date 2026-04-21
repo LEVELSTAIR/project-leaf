@@ -1,0 +1,70 @@
+.crafting-panel {
+    position: absolute;
+    top: 20%;
+    left: 10%;
+    width: 300px;
+    background-color: rgba(30, 30, 30, 0.9);
+    border-width: 2px;
+    border-color: #8B4513;
+    border-radius: 10px;
+    padding: 10px;
+    color: white;
+}
+
+.panel-header {
+    flex-direction: row;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.header-title {
+    font-size: 20px;
+    -unity-font-style: bold;
+}
+
+.close-button {
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+    background-color: #AA4444;
+}
+
+.recipe-entry {
+    background-color: rgba(60, 60, 60, 0.8);
+    border-radius: 5px;
+    margin: 5px 0;
+    padding: 8px;
+    flex-direction: row;
+    align-items: center;
+}
+
+.recipe-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    background-color: #555;
+}
+
+.recipe-name {
+    font-size: 16px;
+    flex-grow: 1;
+}
+
+.recipe-requirements {
+    font-size: 12px;
+    color: #CCCCCC;
+    margin-right: 10px;
+}
+
+.craft-button {
+    width: 60px;
+    height: 30px;
+    background-color: #4CAF50;
+    color: white;
+    border-width: 0;
+    border-radius: 3px;
+}
+
+.craft-button:disabled {
+    background-color: #666;
+}

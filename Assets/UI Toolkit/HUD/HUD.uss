@@ -21,7 +21,7 @@
     border-radius: 6px;
     transition-property: width;
     transition-duration: 0.2s;
-    transition-timing-function: ease-out-circ;
+    transition-timing-function: ease-out;
 }
 
 .health-fill {
@@ -48,19 +48,19 @@
     margin-right: 5px;
     justify-content: center;
     align-items: center;
-    transition-property: scale, border-color, background-color;
+    transition-property: transform, border-color, background-color;
     transition-duration: 0.1s;
 }
 
 .hotbar-slot:hover {
     background-color: rgba(255, 255, 255, 0.2);
-    scale: 1.05;
+    transform: scale(1.05);
 }
 
 .active-slot {
     border-color: rgb(255, 255, 255);
     background-color: rgba(255, 255, 255, 0.15);
-    scale: 1.1;
+    transform: scale(1.1);
     border-width: 2px;
 }
 

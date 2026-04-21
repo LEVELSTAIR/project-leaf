@@ -2,6 +2,32 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
+/*
+ InventoryManager
+
+ Centralized runtime inventory system used by gameplay systems and UI.
+
+ Responsibilities:
+ - Track item stacks and special resource counters (gold, water, clay, wood).
+ - Provide APIs to add / remove / query items (`AddItem`, `RemoveItem`,
+   `GetItemAmount`, `HasItem`).
+ - Maintain a simple slot-based list (`items`) and separate fast-access
+   counters for common resources used by other systems (HUD, crafting).
+ - Emit events (`OnItemAdded`, `OnItemRemoved`, `OnInventoryChanged`) so
+   UI and game logic can react to inventory changes.
+
+ Debug / Test support:
+ - The inspector exposes a small "Debug - Test Data" section that can
+   auto-populate the inventory on Start() for rapid testing.
+
+ Notes / tips:
+ - Keep `itemName` strings consistent with crafting/consumption logic to
+   avoid mismatches when checking or removing resources.
+ - This manager is intentionally lightweight; consider replacing the
+   internal representation with a more advanced container if you need
+   features like unique IDs, durability, or equipment slots.
+ */
+
 public class InventoryManager : MonoBehaviour
 {
     public static InventoryManager Instance { get; private set; }
@@ -15,23 +41,38 @@ public class InventoryManager : MonoBehaviour
 
     [Header("Item max limit")]
 
+    // Maximum stack sizes for various item categories. These can be tuned
+    // in the inspector to change how many units fit in a single inventory
+    // slot for each resource type.
     [Header("Max Stack Sizes")]
     public int maxGoldStack = 999;
     public int maxWaterStack = 999;
     public int maxSeedStack = 99;
     public int defaultMaxStack = 99;
 
+    [Header("Debug - Test Data")]
+    public bool autoFillTestData = false;
+    public int testGoldAmount = 500;
+    public int testWaterAmount = 300;
+    public int testClayAmount = 200;
+    public int testWoodAmount = 150;
+    public Dictionary<string, int> testSeeds = new Dictionary<string, int>();
 
-    // Events for UI updates
+
+    // Events for UI updates and other listeners. Subscribe to these to be
+    // notified when items are added/removed or the inventory changes.
     public System.Action<InventoryItem> OnItemAdded;
     public System.Action<InventoryItem> OnItemRemoved;
     public System.Action OnInventoryChanged;
 
-    // Separate tracking for different item types
+    // Fast-access counters for commonly referenced resource types. These
+    // are maintained alongside the slot list for quick queries and UI
+    // updates (e.g. HUD). Keep them in sync with AddItem/RemoveItem.
     private int totalGold;
     private int totalWater;
     private Dictionary<string, int> seeds = new Dictionary<string, int>();
     private int totalClay;
+    private int totalWood;
 
     private void Awake()
     {
@@ -52,6 +93,12 @@ public class InventoryManager : MonoBehaviour
         {
             hudManager = HUDManager.Instance;
         }
+
+        // Auto-fill test data if enabled
+        if (autoFillTestData)
+        {
+            PopulateTestInventory();
+        }
     }
 
     /// <summary>
@@ -59,6 +106,7 @@ public class InventoryManager : MonoBehaviour
     /// </summary>
     public bool AddItem(string itemName, ItemType itemType, int amount, Sprite icon = null)
     {
+        // Validate input early.
         if (amount <= 0) return false;
 
         // Handle special items separately for quick access
@@ -80,6 +128,10 @@ public class InventoryManager : MonoBehaviour
             case ItemType.Material:
                 if (itemName.ToLower() == "clay")
                     totalClay += amount;
+                break;
+            case ItemType.Wood:
+                if (itemName.ToLower() == "wood")
+                    totalWood += amount;
                 break;
         }
 
@@ -136,6 +188,8 @@ public class InventoryManager : MonoBehaviour
     /// </summary>
     public bool RemoveItem(string itemName, ItemType itemType, int amount)
     {
+        // Removes up to `amount` from the inventory and updates fast-tracked
+        // counters. Returns true when removal succeeded.
         if (amount <= 0) return false;
 
         int totalAvailable = GetItemAmount(itemName, itemType);
@@ -163,6 +217,13 @@ public class InventoryManager : MonoBehaviour
                 {
                     totalClay -= amount;
                     if (totalClay < 0) totalClay = 0;
+                }
+                break;
+            case ItemType.Wood:
+                if (itemName.ToLower() == "wood")
+                {
+                    totalWood -= amount;
+                    if (totalWood < 0) totalWood = 0;
                 }
                 break;
         }
@@ -201,6 +262,8 @@ public class InventoryManager : MonoBehaviour
     /// </summary>
     public int GetItemAmount(string itemName, ItemType itemType)
     {
+        // Returns the total amount of the given item available in inventory.
+        // Uses fast counters for special resources to avoid iterating slots.
         switch (itemType)
         {
             case ItemType.Gold:
@@ -212,6 +275,10 @@ public class InventoryManager : MonoBehaviour
             case ItemType.Material:
                 if (itemName.ToLower() == "clay")
                     return totalClay;
+                break;
+            case ItemType.Wood:
+                if (itemName.ToLower() == "wood")
+                    return totalWood;
                 break;
             default:
                 return items.Where(i => i.itemName == itemName && i.itemType == itemType)
@@ -304,6 +371,60 @@ public class InventoryManager : MonoBehaviour
         seeds.Clear();
         OnInventoryChanged?.Invoke();
         UpdateUI();
+    }
+
+    /// <summary>
+    /// Populates inventory with test amounts of resources for debugging/testing.
+    /// Configure amounts in the Inspector under "Debug - Test Data" section.
+    /// </summary>
+    public void PopulateTestInventory()
+    {
+        // Add configured debug/test resources. This is helpful during
+        // development to quickly populate the player with materials.
+        Debug.Log("[InventoryManager] Populating test inventory...");
+
+        // Add test gold
+        if (testGoldAmount > 0)
+        {
+            AddItem("Gold", ItemType.Gold, testGoldAmount);
+            Debug.Log($"[InventoryManager] Added {testGoldAmount} Gold");
+        }
+
+        // Add test water
+        if (testWaterAmount > 0)
+        {
+            AddItem("Water", ItemType.Water, testWaterAmount);
+            Debug.Log($"[InventoryManager] Added {testWaterAmount} Water");
+        }
+
+        // Add test clay
+        if (testClayAmount > 0)
+        {
+            AddItem("Clay", ItemType.Material, testClayAmount);
+            Debug.Log($"[InventoryManager] Added {testClayAmount} Clay");
+        }
+
+        // Add test wood
+        if (testWoodAmount > 0)
+        {
+            AddItem("Wood", ItemType.Wood, testWoodAmount);
+            Debug.Log($"[InventoryManager] Added {testWoodAmount} Wood");
+        }
+
+        // Add test seeds from dictionary
+        if (testSeeds != null && testSeeds.Count > 0)
+        {
+            foreach (var seedEntry in testSeeds)
+            {
+                if (seedEntry.Value > 0)
+                {
+                    AddItem(seedEntry.Key, ItemType.Seed, seedEntry.Value);
+                    Debug.Log($"[InventoryManager] Added {seedEntry.Value} {seedEntry.Key} seeds");
+                }
+            }
+        }
+
+        Debug.Log("[InventoryManager] Test inventory populated!");
     }
 
 }

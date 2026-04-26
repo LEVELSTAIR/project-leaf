@@ -71,11 +71,12 @@ public class PlayerInteraction : MonoBehaviour
 
                     currentInteractable = interactable;
                     currentInteractable.Highlight(true);
+                }
 
-                    if (HUDManager.Instance != null)
-                    {
-                        HUDManager.Instance.ShowInteractionPrompt(currentInteractable.InteractionPrompt);
-                    }
+                // Update prompt every frame to reflect dynamic changes (e.g., countdown timers)
+                if (HUDManager.Instance != null)
+                {
+                    HUDManager.Instance.ShowInteractionPrompt(currentInteractable.InteractionPrompt);
                 }
 
                 lastHitObject = lastHit.collider.gameObject;

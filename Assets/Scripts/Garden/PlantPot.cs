@@ -1,5 +1,4 @@
-// PlantPot.cs
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlantPot : MonoBehaviour, IInteractable
 {
@@ -8,8 +7,12 @@ public class PlantPot : MonoBehaviour, IInteractable
     public SeedData plantedSeedData;
     public GameObject currentPlant;
 
-    [Header("Growth Settings")]
+    [Header("Growth & Water")]
     public float currentGrowthTime = 0f;
+    public float currentWaterLevel = 0f;     // water currently stored in the pot
+    private float maxWaterCapacity = 0f;      // from SeedData.waterRequired
+    private float waterConsumptionRate = 0f;  // maxWaterCapacity / growthTime
+
     public bool isReadyToHarvest = false;
 
     [Header("Visual Effects")]
@@ -34,18 +37,61 @@ public class PlantPot : MonoBehaviour, IInteractable
 
     private void Update()
     {
-        if (isPlanted && !isReadyToHarvest)
+        // Only progress growth if planted, not yet harvestable, and has water
+        if (isPlanted && !isReadyToHarvest && plantedSeedData != null)
         {
-            currentGrowthTime += Time.deltaTime;
-
-            // Update plant growth visual
-            UpdatePlantGrowthVisual();
-
-            // Check if plant is fully grown
-            if (currentGrowthTime >= plantedSeedData.growthTime)
+            if (currentWaterLevel > 0f)
             {
-                MakePlantReadyToHarvest();
+                // Consume water over time
+                float waterUsed = waterConsumptionRate * Time.deltaTime;
+                currentWaterLevel = Mathf.Max(0f, currentWaterLevel - waterUsed);
+
+                // Growth increases only when water is available
+                currentGrowthTime += Time.deltaTime;
+
+                // Update visual scale
+                UpdatePlantGrowthVisual();
+
+                // Check for full maturity
+                if (currentGrowthTime >= plantedSeedData.growthTime)
+                {
+                    MakePlantReadyToHarvest();
+                }
             }
+            // else: no water → growth stops (timer pauses)
+        }
+    }
+
+    /// <summary>
+    /// Called by the WateringController when player left‑clicks this pot.
+    /// </summary>
+    /// <param name="waterAmount">Amount of water to add (from inventory)</param>
+    public void WaterPlant(float waterAmount)
+    {
+        if (!isPlanted)
+        {
+            Debug.Log("Cannot water an empty pot!");
+            return;
+        }
+
+        if (isReadyToHarvest)
+        {
+            Debug.Log("Plant is already fully grown!");
+            return;
+        }
+
+        // Add water, but do not exceed max capacity
+        float newWaterLevel = currentWaterLevel + waterAmount;
+        currentWaterLevel = Mathf.Min(maxWaterCapacity, newWaterLevel);
+
+        // Optional: show UI feedback
+        if (HUDManager.Instance != null)
+        {
+            HUDManager.Instance.ShowMessage($"Watered {plantedSeedData.seedName}: {currentWaterLevel:F1}/{maxWaterCapacity:F1}");
+        }
+        else
+        {
+            Debug.Log($"Watered {plantedSeedData.seedName}. Water: {currentWaterLevel:F1}/{maxWaterCapacity:F1}");
         }
     }
 
@@ -61,31 +107,23 @@ public class PlantPot : MonoBehaviour, IInteractable
         }
         else
         {
-            // Show growth progress
-            float progress = (currentGrowthTime / plantedSeedData.growthTime) * 100f;
-            string progressText = $"{plantedSeedData.seedName} growing: {progress:F0}%";
-
+            // Show growth and water status
+            float growthPercent = (currentGrowthTime / plantedSeedData.growthTime) * 100f;
+            string status = $"{plantedSeedData.seedName} – {growthPercent:F0}% grown\n" +
+                            $"Water: {currentWaterLevel:F1}/{maxWaterCapacity:F1}";
             if (HUDManager.Instance != null)
-            {
-                HUDManager.Instance.ShowMessage(progressText);
-            }
+                HUDManager.Instance.ShowMessage(status);
             else
-            {
-                Debug.Log(progressText);
-            }
+                Debug.Log(status);
         }
     }
 
     private void OpenPlantingUI()
     {
         if (PlantingUIManager.Instance != null)
-        {
             PlantingUIManager.Instance.ShowPlantingUI(this);
-        }
         else
-        {
             Debug.LogError("PlantingUIManager.Instance not found!");
-        }
     }
 
     public void PlantSeed(SeedData seedData)
@@ -101,27 +139,29 @@ public class PlantPot : MonoBehaviour, IInteractable
         {
             Debug.Log($"No {seedData.seedName} seeds available!");
             if (HUDManager.Instance != null)
-            {
                 HUDManager.Instance.ShowMessage($"No {seedData.seedName} seeds available!");
-            }
             return;
         }
 
-        // Remove one seed from inventory
+        // Remove one seed
         SeedManager.Instance.RemoveSeeds(seedData.seedName, 1);
 
-        // Plant the seed
+        // Set up plant data
         isPlanted = true;
         plantedSeedData = seedData;
         currentGrowthTime = 0f;
         isReadyToHarvest = false;
-        interactionPrompt = "Check Plant";
+        interactionPrompt = "Water Plant";
+
+        // Water parameters
+        maxWaterCapacity = seedData.waterRequired;
+        currentWaterLevel = 0f;                     // starts dry
+        waterConsumptionRate = maxWaterCapacity / seedData.growthTime;
 
         // Spawn seedling
         if (seedData.seedlingPrefab != null && plantSpawnPoint != null)
         {
             currentPlant = Instantiate(seedData.seedlingPrefab, plantSpawnPoint.position, Quaternion.identity, plantSpawnPoint);
-            // Start with small scale
             currentPlant.transform.localScale = Vector3.one * 0.3f;
         }
         else if (seedData.seedlingPrefab == null)
@@ -131,9 +171,7 @@ public class PlantPot : MonoBehaviour, IInteractable
 
         Debug.Log($"Planted {seedData.seedName} in pot!");
         if (HUDManager.Instance != null)
-        {
-            HUDManager.Instance.ShowMessage($"Planted {seedData.seedName}!");
-        }
+            HUDManager.Instance.ShowMessage($"Planted {seedData.seedName}! It needs water to grow.");
     }
 
     private void UpdatePlantGrowthVisual()
@@ -151,7 +189,7 @@ public class PlantPot : MonoBehaviour, IInteractable
         isReadyToHarvest = true;
         interactionPrompt = "Harvest Plant";
 
-        // Replace seedling with mature plant if prefab exists
+        // Replace seedling with mature plant (if prefab exists)
         if (plantedSeedData.maturePlantPrefab != null && currentPlant != null)
         {
             Destroy(currentPlant);
@@ -163,22 +201,16 @@ public class PlantPot : MonoBehaviour, IInteractable
             currentPlant.transform.localScale = Vector3.one;
         }
 
+        // Unparent so the plant stays in world when pot is destroyed
+        if (currentPlant != null)
+            currentPlant.transform.SetParent(null);
+
         if (HUDManager.Instance != null)
-        {
             HUDManager.Instance.ShowMessage($"{plantedSeedData.seedName} is ready to harvest!");
-        }
 
         Debug.Log($"{plantedSeedData.seedName} is ready to harvest!");
 
-        // Unparent the plant so it's no longer a child of the pot
-        if (currentPlant != null)
-        {
-            currentPlant.transform.SetParent(null);
-            Debug.Log($"Plant {plantedSeedData.seedName} is now independent in the world");
-        }
-
-        // Destroy the pot after plant matures
-        Debug.Log($"Destroying pot - plant {plantedSeedData.seedName} has matured");
+        // Destroy the pot itself (the plant is now independent)
         Destroy(gameObject);
     }
 
@@ -201,46 +233,40 @@ public class PlantPot : MonoBehaviour, IInteractable
 
             Debug.Log($"Harvested {plantedSeedData.harvestYield} {plantedSeedData.harvestItemName}!");
             if (HUDManager.Instance != null)
-            {
                 HUDManager.Instance.ShowMessage($"Harvested {plantedSeedData.harvestYield} {plantedSeedData.harvestItemName}!");
-            }
         }
         else
         {
             Debug.LogError("InventoryManager.Instance not found!");
         }
 
-        // Destroy the mature plant after harvesting
+        // Destroy the mature plant
         if (currentPlant != null)
-        {
             Destroy(currentPlant);
-            Debug.Log($"Harvested and removed {plantedSeedData.seedName} from the world");
-        }
+
+        // Pot is already destroyed after maturing, but if not, reset
+        if (gameObject != null && !isReadyToHarvest) // safety
+            ResetPot();
     }
 
     private void ResetPot()
     {
-        // Destroy current plant object
         if (currentPlant != null)
-        {
             Destroy(currentPlant);
-            currentPlant = null;
-        }
 
-        // Reset variables
         isPlanted = false;
         plantedSeedData = null;
         currentGrowthTime = 0f;
+        currentWaterLevel = 0f;
+        maxWaterCapacity = 0f;
+        waterConsumptionRate = 0f;
         isReadyToHarvest = false;
-        interactionPrompt = "Plant Seeds";
+        interactionPrompt = "Press F to Plant Seeds";
     }
 
     public void Highlight(bool highlight)
     {
         if (potRenderer != null && highlightMaterial != null)
-        {
             potRenderer.material = highlight ? highlightMaterial : originalMaterial;
-        }
     }
-
 }

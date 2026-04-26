@@ -179,7 +179,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -278,7 +278,7 @@ MonoBehaviour:
   interactionLayer:
     serializedVersion: 2
     m_Bits: 256
-  showDebugRay: 1
+  showDebugRay: 0
   showDebugMessages: 0
   rayColor: {r: 0, g: 1, b: 0, a: 1}
   hitColor: {r: 1, g: 0, b: 0, a: 1}
@@ -288,6 +288,45 @@ Camera:
   m_CorrespondingSourceObject: {fileID: 4459864851310106426, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
   m_PrefabInstance: {fileID: 335856720}
   m_PrefabAsset: {fileID: 0}
+--- !u!114 &51681113
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 51681104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 77a8cc7642ba38c45b8315462be7088e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WateringController
+  range: 3
+  wateringCooldown: 0.5
+  waterUsagePerWatering: 1
+  interactableLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  waterSplashPrefab: {fileID: 0}
+  waterOrigin: {fileID: 609301326}
+--- !u!114 &51681116
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 51681104}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c73da0cd9f9b1b5489bcfbd415afb37a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::WaterCollectorController
+  range: 3
+  collectionCooldown: 0.5
+  wellLayer:
+    serializedVersion: 2
+    m_Bits: 256
+  collectSplashPrefab: {fileID: 0}
+  collectOrigin: {fileID: 0}
 --- !u!1001 &55777810
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -527,7 +566,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -611,7 +650,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -836,7 +875,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -920,7 +959,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -1184,6 +1223,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 482809832}
@@ -1194,7 +1234,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -1368,6 +1408,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 361830923}
@@ -1564,6 +1605,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4459864851310106424, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
       insertIndex: -1
       addedObject: {fileID: 51681109}
+    - targetCorrespondingSourceObject: {fileID: 4459864851310106424, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 51681113}
+    - targetCorrespondingSourceObject: {fileID: 4459864851310106424, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 51681116}
     - targetCorrespondingSourceObject: {fileID: 7662280955598734910, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1393067911}
@@ -1584,7 +1631,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -1688,6 +1735,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 1385650519}
@@ -1849,7 +1897,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -1933,7 +1981,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -2180,7 +2228,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -2279,7 +2327,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -2513,13 +2561,18 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1365260592802022805, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
   m_PrefabInstance: {fileID: 2028504976}
   m_PrefabAsset: {fileID: 0}
+--- !u!4 &609301326 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4197001719652497188, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
+  m_PrefabInstance: {fileID: 335856720}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &624285643
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -2603,7 +2656,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -2828,7 +2881,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -2906,13 +2959,82 @@ PrefabInstance:
       insertIndex: -1
       addedObject: {fileID: 1090296604}
   m_SourcePrefab: {fileID: 100100000, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
+--- !u!1001 &667512143
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1341526311017406106, guid: 0cb9e46a52159c3438885f2295cbff76, type: 3}
+      propertyPath: m_Name
+      value: Well
+      objectReference: {fileID: 0}
+    - target: {fileID: 2032287697363399516, guid: 0cb9e46a52159c3438885f2295cbff76, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 895.08124
+      objectReference: {fileID: 0}
+    - target: {fileID: 2032287697363399516, guid: 0cb9e46a52159c3438885f2295cbff76, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4.9990983
+      objectReference: {fileID: 0}
+    - target: {fileID: 2032287697363399516, guid: 0cb9e46a52159c3438885f2295cbff76, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 855.1349
+      objectReference: {fileID: 0}
+    - target: {fileID: 2032287697363399516, guid: 0cb9e46a52159c3438885f2295cbff76, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2032287697363399516, guid: 0cb9e46a52159c3438885f2295cbff76, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2032287697363399516, guid: 0cb9e46a52159c3438885f2295cbff76, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2032287697363399516, guid: 0cb9e46a52159c3438885f2295cbff76, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2032287697363399516, guid: 0cb9e46a52159c3438885f2295cbff76, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2032287697363399516, guid: 0cb9e46a52159c3438885f2295cbff76, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2032287697363399516, guid: 0cb9e46a52159c3438885f2295cbff76, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6876733124600397981, guid: 0cb9e46a52159c3438885f2295cbff76, type: 3}
+      propertyPath: m_Height
+      value: 17.76267
+      objectReference: {fileID: 0}
+    - target: {fileID: 6876733124600397981, guid: 0cb9e46a52159c3438885f2295cbff76, type: 3}
+      propertyPath: m_Radius
+      value: 5.5041504
+      objectReference: {fileID: 0}
+    - target: {fileID: 6876733124600397981, guid: 0cb9e46a52159c3438885f2295cbff76, type: 3}
+      propertyPath: m_Center.z
+      value: 1.0513916
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 0cb9e46a52159c3438885f2295cbff76, type: 3}
 --- !u!1001 &693027536
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -3062,6 +3184,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 730491756}
@@ -3072,7 +3195,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -3256,6 +3379,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 1681525719}
@@ -3317,6 +3441,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 750135211}
@@ -3347,6 +3472,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 1298472548}
@@ -3476,7 +3602,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -3938,6 +4064,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 980597922}
@@ -3999,6 +4126,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 1690681753}
@@ -4029,6 +4157,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 2016451014}
@@ -4172,6 +4301,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 1692567790}
@@ -4202,6 +4332,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 73327503}
@@ -4533,7 +4664,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -4740,6 +4871,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 1508763020}
@@ -4774,7 +4906,7 @@ MonoBehaviour:
   containerName: Water Barrel
   waterAmount: 100
   refillAmount: 10
-  waterVisual: {fileID: 0}
+  waterVisual: {fileID: 6412945581489058737, guid: 92a9e4738ce7ee6439998ac90ed3335d, type: 3}
   highlightMaterial: {fileID: 0}
 --- !u!4 &1408099269 stripped
 Transform:
@@ -4787,7 +4919,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -4891,6 +5023,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 759381954}
@@ -5043,6 +5176,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 1428069564}
@@ -5147,7 +5281,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -5382,6 +5516,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 1349369560}
@@ -5425,7 +5560,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1609173104}
+  - {fileID: 1682827314}
   - {fileID: 1488842377}
   - {fileID: 1303404116}
   m_Father: {fileID: 0}
@@ -5456,6 +5591,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 367123333}
@@ -5465,61 +5601,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 1365260592802022805, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
   m_PrefabInstance: {fileID: 1336770204}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &1609173103
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1609173104}
-  m_Layer: 0
-  m_Name: Pots
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1609173104
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1609173103}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1549213367}
-  - {fileID: 810360768}
-  - {fileID: 293411027}
-  - {fileID: 361599720}
-  - {fileID: 1077791442}
-  - {fileID: 2059008585}
-  - {fileID: 1388355921}
-  - {fileID: 2033816601}
-  - {fileID: 1675630427}
-  - {fileID: 1103953622}
-  - {fileID: 809195807}
-  - {fileID: 1090296603}
-  - {fileID: 1229579010}
-  - {fileID: 256977117}
-  - {fileID: 1463258538}
-  - {fileID: 1412255399}
-  - {fileID: 2127136191}
-  - {fileID: 1850669201}
-  - {fileID: 1586244985}
-  - {fileID: 1190335826}
-  - {fileID: 776203090}
-  - {fileID: 2112222300}
-  - {fileID: 722246527}
-  - {fileID: 1848291343}
-  m_Father: {fileID: 1562745620}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1642818763
 GameObject:
   m_ObjectHideFlags: 0
@@ -5583,6 +5664,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 418926662}
@@ -5592,6 +5674,61 @@ MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 8633624795194145752, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
   m_PrefabInstance: {fileID: 1954031084}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1682827313
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1682827314}
+  m_Layer: 0
+  m_Name: Pots
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1682827314
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1682827313}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children:
+  - {fileID: 1549213367}
+  - {fileID: 810360768}
+  - {fileID: 293411027}
+  - {fileID: 361599720}
+  - {fileID: 1077791442}
+  - {fileID: 2059008585}
+  - {fileID: 1388355921}
+  - {fileID: 2033816601}
+  - {fileID: 1675630427}
+  - {fileID: 1103953622}
+  - {fileID: 809195807}
+  - {fileID: 1090296603}
+  - {fileID: 1229579010}
+  - {fileID: 256977117}
+  - {fileID: 1463258538}
+  - {fileID: 1412255399}
+  - {fileID: 2127136191}
+  - {fileID: 1850669201}
+  - {fileID: 1586244985}
+  - {fileID: 1190335826}
+  - {fileID: 776203090}
+  - {fileID: 2112222300}
+  - {fileID: 722246527}
+  - {fileID: 1848291343}
+  m_Father: {fileID: 1562745620}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &1690681753 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 8633624795194145752, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
@@ -5720,6 +5857,7 @@ MonoBehaviour:
   recipesToDisplay:
   - {fileID: 11400000, guid: 9930619e5eed82b4399b3ec33ac8cc02, type: 2}
   - {fileID: 11400000, guid: 84122d1f44df91148911c8642e570613, type: 2}
+  - {fileID: 11400000, guid: 8ef74e28c49680547bf9f59890359c88, type: 2}
 --- !u!114 &1736654338
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5735,6 +5873,7 @@ MonoBehaviour:
   availableRecipes:
   - {fileID: 11400000, guid: 9930619e5eed82b4399b3ec33ac8cc02, type: 2}
   - {fileID: 11400000, guid: 84122d1f44df91148911c8642e570613, type: 2}
+  - {fileID: 11400000, guid: 8ef74e28c49680547bf9f59890359c88, type: 2}
   placementMask:
     serializedVersion: 2
     m_Bits: 128
@@ -5929,6 +6068,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 1214437935}
@@ -5959,6 +6099,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 1899126018}
@@ -6098,7 +6239,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -6182,7 +6323,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -6266,7 +6407,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -6479,7 +6620,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 1609173104}
+    m_TransformParent: {fileID: 1682827314}
     m_Modifications:
     - target: {fileID: 442795631610291124, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       propertyPath: m_Layer
@@ -6583,6 +6724,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 355369233}
@@ -6644,6 +6786,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 58955154}
@@ -6674,6 +6817,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 372028553}
@@ -6704,6 +6848,7 @@ MonoBehaviour:
   plantedSeedData: {fileID: 0}
   currentPlant: {fileID: 0}
   currentGrowthTime: 15
+  currentWaterLevel: 0
   isReadyToHarvest: 0
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 495057169}
@@ -6850,3 +6995,4 @@ SceneRoots:
   - {fileID: 2494785605691515668}
   - {fileID: 1360139110}
   - {fileID: 974287964}
+  - {fileID: 667512143}

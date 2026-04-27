@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // See Docs/CraftingRecipe.md for detailed description and usage notes.
 =======
 /*
@@ -37,6 +38,9 @@ using System.Collections.Generic;
    assets in the editor when creating or tuning recipes.
  */
 >>>>>>> 3039158 (Cage crafting)
+=======
+// See Docs/CraftingRecipe.md for detailed description and usage notes.
+>>>>>>> cbe9f10 (Descriptions added)
 
 [Serializable]
 public class ResourceRequirement

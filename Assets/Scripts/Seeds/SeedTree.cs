@@ -3,6 +3,7 @@ using System.Collections;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+[RequireComponent(typeof(TreeOxygenArea))]
 public class SeedTree : MonoBehaviour, IInteractable
 {
     [Header("Tree Settings")]
@@ -82,6 +83,13 @@ public class SeedTree : MonoBehaviour, IInteractable
 
         isDepleted = false;
         canInteract = true;
+
+        // Activate the oxygen area
+        TreeOxygenArea oxygen = GetComponent<TreeOxygenArea>();
+        if (oxygen != null && seedData != null)
+        {
+            oxygen.Setup(seedData);
+        }
     }
 
     private void Update()

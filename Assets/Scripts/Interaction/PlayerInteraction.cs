@@ -48,6 +48,21 @@ public class PlayerInteraction : MonoBehaviour
 
         if (Physics.Raycast(ray, out lastHit, interactionDistance, interactionLayer))
         {
+            // Only interact with CapsuleColliders to avoid triggering from SphereColliders (oxygen zones)
+            if (!(lastHit.collider is CapsuleCollider))
+            {
+                if (currentInteractable != null)
+                {
+                    if (HUDManager.Instance != null)
+                    {
+                        HUDManager.Instance.HideInteractionPrompt();
+                    }
+                    currentInteractable.Highlight(false);
+                    currentInteractable = null;
+                }
+                return;
+            }
+
             IInteractable interactable = lastHit.collider.GetComponent<IInteractable>();
 
             if (showDebugMessages)

@@ -8,6 +8,7 @@ public class SeedData : ScriptableObject
     public float growthTime = 60f;          // seconds to mature when constantly watered
     public float waterRequired = 30f;       // total water units needed to fully grow
     public int harvestYield = 1;
+    public float oxygenAreaRadius = 10f;
     public string harvestItemName;
     public ItemType harvestItemType;
     public GameObject seedlingPrefab;

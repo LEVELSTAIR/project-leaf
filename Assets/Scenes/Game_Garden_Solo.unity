@@ -643,6 +643,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 6402528771539139829, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
       insertIndex: -1
       addedObject: {fileID: 1190335827}
+    - targetCorrespondingSourceObject: {fileID: 6402528771539139829, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1190335831}
   m_SourcePrefab: {fileID: 100100000, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
 --- !u!1001 &140472915
 PrefabInstance:
@@ -1526,6 +1529,10 @@ PrefabInstance:
       propertyPath: m_LocalPosition.y
       value: 200
       objectReference: {fileID: 0}
+    - target: {fileID: 4459864850019384736, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4459864850019384737, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
       propertyPath: m_IsTrigger
       value: 0
@@ -1602,6 +1609,9 @@ PrefabInstance:
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4459864850019384750, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1212072211}
     - targetCorrespondingSourceObject: {fileID: 4459864851310106424, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
       insertIndex: -1
       addedObject: {fileID: 51681109}
@@ -3849,6 +3859,22 @@ PrefabInstance:
       propertyPath: highlightMaterial
       value: 
       objectReference: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
+    - target: {fileID: 5529178066879193405, guid: 8326860c8f3855147a7af6db3700b171, type: 3}
+      propertyPath: density
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 5529178066879193405, guid: 8326860c8f3855147a7af6db3700b171, type: 3}
+      propertyPath: radiusMultiplier
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5529178066879193405, guid: 8326860c8f3855147a7af6db3700b171, type: 3}
+      propertyPath: detailPrototypeIndex
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6721883648888940265, guid: 8326860c8f3855147a7af6db3700b171, type: 3}
+      propertyPath: radiusMultiplier
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6971673183582946558, guid: 8326860c8f3855147a7af6db3700b171, type: 3}
       propertyPath: m_Name
       value: Pine
@@ -3893,7 +3919,9 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 7364414615755897626, guid: 8326860c8f3855147a7af6db3700b171, type: 3}
+    - {fileID: 6721883648888940265, guid: 8326860c8f3855147a7af6db3700b171, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -3958,6 +3986,40 @@ MonoBehaviour:
   highlightMaterial: {fileID: 0}
   seedCollectEffect: {fileID: 0}
   seedCollectSound: {fileID: 0}
+--- !u!114 &977938650
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 977938645}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4272b6097cb1e3d41a7893472a36e3cd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TreeOxygenArea
+  seedData: {fileID: 0}
+--- !u!135 &977938651
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 977938645}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &980597922 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 8633624795194145752, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
@@ -4032,6 +4094,12 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 4906049210635304712, guid: ede48170e4116464da6a63db565b31f4, type: 3}
       insertIndex: -1
       addedObject: {fileID: 977938649}
+    - targetCorrespondingSourceObject: {fileID: 4906049210635304712, guid: ede48170e4116464da6a63db565b31f4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 977938651}
+    - targetCorrespondingSourceObject: {fileID: 4906049210635304712, guid: ede48170e4116464da6a63db565b31f4, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 977938650}
   m_SourcePrefab: {fileID: 100100000, guid: ede48170e4116464da6a63db565b31f4, type: 3}
 --- !u!4 &1021372826 stripped
 Transform:
@@ -4306,6 +4374,43 @@ MonoBehaviour:
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   potRenderer: {fileID: 1692567790}
   plantSpawnPoint: {fileID: 498193250}
+--- !u!114 &1190335831
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1190335825}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f72074a441c2e4c4783e273786ab0e30, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TestGrass
+  detailIndex: 2
+  patchSize: 30
+--- !u!1 &1212072205 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4459864850019384750, guid: 6bacecc4f3df9584198879c73a6b6c36, type: 3}
+  m_PrefabInstance: {fileID: 335856720}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1212072211
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1212072205}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25ceb12fb30125d428ad177e3f2f155d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerOxygen
+  maxOxygen: 100
+  depletionRate: 5
+  refillRate: 10
+  onOxygenDepleted:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!23 &1214437935 stripped
 MeshRenderer:
   m_CorrespondingSourceObject: {fileID: 8633624795194145752, guid: f3145389a60a7e349aea9d2e6e3e42bf, type: 3}
@@ -4782,7 +4887,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6921155046315303330, guid: fb1b9f65926fdfd469c068fc5ec28b83, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 844.57886
+      value: 822.27
       objectReference: {fileID: 0}
     - target: {fileID: 6921155046315303330, guid: fb1b9f65926fdfd469c068fc5ec28b83, type: 3}
       propertyPath: m_LocalRotation.w
@@ -4906,7 +5011,7 @@ MonoBehaviour:
   containerName: Water Barrel
   waterAmount: 100
   refillAmount: 10
-  waterVisual: {fileID: 6412945581489058737, guid: 92a9e4738ce7ee6439998ac90ed3335d, type: 3}
+  waterVisual: {fileID: 0}
   highlightMaterial: {fileID: 0}
 --- !u!4 &1408099269 stripped
 Transform:

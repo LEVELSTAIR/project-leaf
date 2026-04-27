@@ -4,6 +4,7 @@ using UnityEngine.InputSystem;
 using System.Collections.Generic;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // See Docs/CraftingController.md for detailed description and usage notes.
 =======
 /*
@@ -48,6 +49,9 @@ using System.Collections.Generic;
  craftables can be defined without code changes.
  */
 >>>>>>> 3039158 (Cage crafting)
+=======
+// See Docs/CraftingController.md for detailed description and usage notes.
+>>>>>>> cbe9f10 (Descriptions added)
 
 public class CraftingController : MonoBehaviour
 {

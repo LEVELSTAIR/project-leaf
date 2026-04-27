@@ -2,6 +2,7 @@ using UnityEngine;
 using System;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // See Docs/InventoryItem.md for details and usage tips.]
 =======
 /*
@@ -27,6 +28,9 @@ using System;
  */
 
 >>>>>>> 3039158 (Cage crafting)
+=======
+// See Docs/InventoryItem.md for details and usage tips.]
+>>>>>>> cbe9f10 (Descriptions added)
 [System.Serializable]
 public class InventoryItem
 {

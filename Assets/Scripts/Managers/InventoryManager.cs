@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 // See Docs/InventoryManager.md for detailed description and usage notes.
 =======
 /*
@@ -31,6 +32,9 @@ using System.Linq;
    features like unique IDs, durability, or equipment slots.
  */
 >>>>>>> 3039158 (Cage crafting)
+=======
+// See Docs/InventoryManager.md for detailed description and usage notes.
+>>>>>>> cbe9f10 (Descriptions added)
 
 public class InventoryManager : MonoBehaviour
 {

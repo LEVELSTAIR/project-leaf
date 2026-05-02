@@ -12,40 +12,50 @@
     bottom: 0;
 }
 
-/* Left overlay (faded background) */
+/* Full screen overlay (faded background) */
 .overlay-background {
-    flex-grow: 3;
-    background-color: rgba(0, 0, 0, 0.3);
+    flex-grow: 1;
+    background-color: rgba(0, 0, 0, 0.5);
     transition-property: opacity;
     transition-duration: 0.3s;
+    position: absolute;
+    left: 0;
+    top: 0;
+    right: 0;
+    bottom: 0;
 }
 
-/* Main Panel - Right 1/4 of screen */
+/* Main Panel - Centered Modal */
 .escape-menu-panel {
-    width: 25%;
-    height: 100%;
-    background-color: rgba(20, 30, 40, 0.85);
-    border-left-color: rgba(255, 255, 255, 0.15);
-    border-left-width: 1px;
+    width: 450px;
+    height: auto;
+    background-color: rgba(0, 0, 0, 0.85);
+    border-color: rgba(255, 255, 255, 0.2);
+    border-width: 2px;
+    border-radius: 12px;
     flex-direction: column;
     justify-content: space-between;
     padding: 40px 30px;
-    transition-property: translate, opacity;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    translate: -50% -50%;
+    transition-property: scale, opacity;
     transition-duration: 0.3s;
     transition-timing-function: ease-out;
-    
+
     /* Frosted glass effect simulation */
     -unity-background-scale-mode: stretch-to-fill;
 }
 
 /* Animation states */
 .menu-hidden {
-    translate: 100% 0;
+    scale: 0.8;
     opacity: 0;
 }
 
 .menu-visible {
-    translate: 0 0;
+    scale: 1;
     opacity: 1;
 }
 
@@ -109,7 +119,7 @@
     flex-grow: 1;
     flex-direction: column;
     justify-content: center;
-    align-items: stretch;
+    align-items: center;
     padding: 0 10px;
 }
 
@@ -118,35 +128,35 @@
     height: 50px;
     margin-bottom: 10px;
     padding: 12px 20px;
-    
-    background-color: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.15);
+
+    background-color: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.25);
     border-width: 1px;
     border-radius: 8px;
-    
-    color: rgba(255, 255, 255, 0.9);
+
+    color: rgba(255, 255, 255, 1);
     font-size: 16px;
     letter-spacing: 2px;
     -unity-text-align: middle-center;
-    
+
     transition-property: background-color, border-color, scale, translate;
     transition-duration: 0.2s;
     transition-timing-function: ease-out;
-    
+
     flex-direction: row;
     justify-content: center;
     align-items: center;
 }
 
 .menu-button:hover {
-    background-color: rgba(255, 255, 255, 0.15);
-    border-color: rgba(200, 230, 180, 0.4);
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: rgba(200, 230, 180, 0.5);
     scale: 1.02;
     translate: -3px 0;
 }
 
 .menu-button:active {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: rgba(255, 255, 255, 0.1);
     scale: 0.98;
 }
 

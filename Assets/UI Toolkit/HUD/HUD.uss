@@ -84,3 +84,17 @@
     border-color: rgba(255, 255, 255, 0.15);
 }
 
+/* Seeds Display */
+#SeedsContainer > Label {
+    font-size: 24px;
+    -unity-font-style: bold;
+    color: rgb(150, 255, 100);
+    margin-bottom: 8px;
+}
+
+#SeedsContainer > VisualElement {
+    width: 28px;
+    height: 28px;
+    margin-right: 8px;
+}
+

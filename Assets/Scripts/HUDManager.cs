@@ -262,15 +262,15 @@ public class HUDManager : MonoBehaviour
             seedsContainer.style.top = 115;
             seedsContainer.style.right = 10;
             seedsContainer.style.backgroundColor = new Color(0, 0, 0, 0.7f);
-            seedsContainer.style.paddingTop = 8;
-            seedsContainer.style.paddingBottom = 8;
-            seedsContainer.style.paddingLeft = 12;      // Fixed: paddingLeft (lowercase)
-            seedsContainer.style.paddingRight = 12;     // Fixed: paddingRight (lowercase)
+            seedsContainer.style.paddingTop = 12;
+            seedsContainer.style.paddingBottom = 12;
+            seedsContainer.style.paddingLeft = 16;
+            seedsContainer.style.paddingRight = 16;
             seedsContainer.style.borderTopLeftRadius = 5;
             seedsContainer.style.borderTopRightRadius = 5;
             seedsContainer.style.borderBottomLeftRadius = 5;
             seedsContainer.style.borderBottomRightRadius = 5;
-            seedsContainer.style.minWidth = 150;
+            seedsContainer.style.minWidth = 180;
             root.Add(seedsContainer);
         }
 
@@ -474,7 +474,7 @@ public class HUDManager : MonoBehaviour
         title.style.unityFontStyleAndWeight = FontStyle.Bold;
         title.style.marginBottom = 8;
         title.style.color = new Color(0.8f, 0.8f, 0.5f);
-        title.style.fontSize = 14;
+        title.style.fontSize = 18;
         seedsContainer.Add(title);
 
         if (seeds == null || seeds.Count == 0)
@@ -482,6 +482,7 @@ public class HUDManager : MonoBehaviour
             var emptyLabel = new Label("No seeds");
             emptyLabel.style.color = Color.gray;
             emptyLabel.style.marginTop = 4;
+            emptyLabel.style.fontSize = 16;
             seedsContainer.Add(emptyLabel);
         }
         else
@@ -504,11 +505,11 @@ public class HUDManager : MonoBehaviour
 
                 var seedNameLabel = new Label(seed.Key);
                 seedNameLabel.style.color = Color.white;
-                seedNameLabel.style.fontSize = 12;
+                seedNameLabel.style.fontSize = 16;
 
                 var seedAmountLabel = new Label($"x{seed.Value}");
                 seedAmountLabel.style.color = new Color(0.8f, 0.8f, 0.5f);
-                seedAmountLabel.style.fontSize = 12;
+                seedAmountLabel.style.fontSize = 16;
                 seedAmountLabel.style.marginLeft = 10;
 
                 seedElement.Add(seedNameLabel);

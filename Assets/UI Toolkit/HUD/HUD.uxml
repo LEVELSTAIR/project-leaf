@@ -14,11 +14,7 @@
                     <ui:Label text="50 Seeds" class="glass-text" style="font-size: 18px;"/>
                 </ui:VisualElement>
             </ui:VisualElement>
-            <ui:VisualElement name="InventoryPanel" class="glass-panel" style="height: auto; min-width: 150px; padding: 10px;">
-                <ui:Label name="GoldLabel" text="💰 Gold: 0" style="margin-bottom: 5px;"/>
-                <ui:Label name="WaterLabel" text="💧 Water: 0" style="margin-bottom: 5px;"/>
-                <ui:VisualElement name="SeedsContainer" style="margin-top: 5px; display: none;"/>
-            </ui:VisualElement>
+            <ui:Button name="PauseButton" text="⏸" style="font-size: 32px; align-items: center; justify-content: center; padding: 0; background-color: transparent; border-width: 0; color: white;"/>
             <ui:VisualElement name="TopRightGroup" style="flex-direction: row; align-items: center;">
                 <ui:VisualElement name="ClockContainer" class="glass-panel clock-panel" style="margin-right: 15px; padding: 10px; justify-content: center; align-items: center; position: absolute; top: 5px; left: -108px;">
                     <ui:Label name="TimeLabel" text="12:00" class="glass-text" style="font-size: 24px; font-style: bold;"/>
@@ -69,7 +65,10 @@
                     <ui:Label text="5" class="slot-number" style="position: absolute; bottom: 2px; right: 5px; font-size: 12px;"/>
                 </ui:VisualElement>
             </ui:VisualElement>
-            <ui:VisualElement style="width: 100px;"/>
+            <ui:VisualElement name="ResourceContainer" style="position: absolute; bottom: 100px; left: 0; right: 0; flex-direction: row; align-items: center; justify-content: center;">
+                <ui:Label name="GoldLabel" text="💰 Gold: 0" style="color: rgb(255, 215, 0); font-size: 22px; -unity-font-style: bold; margin-right: 20px;"/>
+                <ui:Label name="WaterLabel" text="💧 Water: 0" style="color: rgb(75, 180, 255); font-size: 22px; -unity-font-style: bold;"/>
+            </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="InteractionContainer" style="display: flex; position: absolute; bottom: 129px; left: 474px; right: 408px; align-items: center; top: auto; height: 69px; background-color: rgba(0, 0, 0, 0);">
             <ui:VisualElement style="background-color: rgba(0, 0, 0, 0); padding: 12px 24px; border-radius: 8px;">

@@ -45,6 +45,9 @@ public class HUDManager : MonoBehaviour
     private Label messageLabel;
     private Coroutine messageCoroutine;
 
+    // Pause Button
+    private Button pauseButton;
+
     private void Awake()
     {
         if (Instance != null && Instance != this)
@@ -116,6 +119,7 @@ public class HUDManager : MonoBehaviour
         InitializeInteractionPrompt();
         InitializeInventoryUI();
         InitializeMessageUI();
+        InitializePauseButton();
 
         // Initial values
         UpdateHealth(1f);
@@ -304,6 +308,13 @@ public class HUDManager : MonoBehaviour
             messageLabel.style.display = DisplayStyle.None;
             root.Add(messageLabel);
         }
+    }
+
+    private void InitializePauseButton()
+    {
+        pauseButton = root.Q<Button>("PauseButton");
+        if (pauseButton != null)
+            pauseButton.clicked += () => KeyboardInputManager.Instance?.OpenEscapeMenu();
     }
 
     private void OnHotbarSlotChanged(int slotNumber)

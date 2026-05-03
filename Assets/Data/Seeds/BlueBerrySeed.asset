@@ -15,8 +15,22 @@ MonoBehaviour:
   seedName: BlueBerry
   seedIcon: {fileID: 0}
   growthTime: 15
+  waterRequired: 30
   harvestYield: 10
+  maxHarvests: 3
+  oxygenAreaRadius: 10
   harvestItemName: Seed
   harvestItemType: 0
   seedlingPrefab: {fileID: 1891901838137653615, guid: b65e75c4eb13b224f97fe6911678b047, type: 3}
   maturePlantPrefab: {fileID: 7730201663343360792, guid: fb1b9f65926fdfd469c068fc5ec28b83, type: 3}
+  producesFlowerSeeds: 1
+  flowerSeedYields:
+  - flowerSeedData: {fileID: 11400000, guid: 872a2836b6692e24697c71af4b609809, type: 2}
+    minYield: 10
+    maxYield: 20
+  - flowerSeedData: {fileID: 11400000, guid: a37f8570cfa81a84a8db02f624528f34, type: 2}
+    minYield: 10
+    maxYield: 20
+  - flowerSeedData: {fileID: 11400000, guid: b2901058728a1434ba9b79398be0d311, type: 2}
+    minYield: 10
+    maxYield: 20

@@ -15,8 +15,22 @@ MonoBehaviour:
   seedName: Pine
   seedIcon: {fileID: 0}
   growthTime: 15
+  waterRequired: 30
   harvestYield: 10
+  maxHarvests: 3
+  oxygenAreaRadius: 10
   harvestItemName: Seed
   harvestItemType: 0
   seedlingPrefab: {fileID: 2173637093521219903, guid: bf8b0f4b59c292a459ed54ff400f7d65, type: 3}
   maturePlantPrefab: {fileID: 6971673183582946558, guid: 8326860c8f3855147a7af6db3700b171, type: 3}
+  producesFlowerSeeds: 1
+  flowerSeedYields:
+  - flowerSeedData: {fileID: 11400000, guid: a37f8570cfa81a84a8db02f624528f34, type: 2}
+    minYield: 5
+    maxYield: 15
+  - flowerSeedData: {fileID: 11400000, guid: b2901058728a1434ba9b79398be0d311, type: 2}
+    minYield: 5
+    maxYield: 15
+  - flowerSeedData: {fileID: 11400000, guid: 872a2836b6692e24697c71af4b609809, type: 2}
+    minYield: 5
+    maxYield: 15

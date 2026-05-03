@@ -1,0 +1,14 @@
+<UXML xmlns="UnityEngine.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/Crafting/CraftingStyles.uss?fileID=7433441132597879392&amp;guid=4d4373634ab181e47a1edae47eeb3c75&amp;type=3#CraftingStyles"/>
+    <Style src="project://database/Assets/UI%20Toolkit/GlassTheme.uss?fileID=7433441132597879392&amp;guid=03998e6826707b944954e041c886f580&amp;type=3#GlassTheme"/>
+    <Style src="project://database/Assets/UI%20Toolkit/Planting/FlowerSeedPlantingStyles.uss?fileID=7433441132597879392&amp;guid=795faf5967f60254190f71366fa59bfc&amp;type=3#FlowerSeedPlantingStyles"/>
+    <VisualElement name="planting-panel" class="glass-panel" style="top: 205px; left: 507px; height: 288px; width: 332px; background-color: rgba(128, 128, 128, 0.54); border-left-color: rgba(88, 115, 126, 0); border-right-color: rgba(88, 115, 126, 0); border-top-color: rgba(88, 115, 126, 0); border-bottom-color: rgba(88, 115, 126, 0);">
+        <VisualElement class="panel-header">
+            <Label text="Plant Flower Seeds" class="header-title"/>
+            <Button name="close-button" text="X" class="close-button"/>
+        </VisualElement>
+        <ScrollView class="recipe-scroll">
+            <VisualElement name="flower-seed-list" class="recipe-list"/>
+        </ScrollView>
+    </VisualElement>
+</UXML>

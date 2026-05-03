@@ -18,6 +18,6 @@ MonoBehaviour:
   parentTransform: {fileID: 0}
   requiredResources:
   - itemName: wood
-    itemType: 5
+    itemType: 7
     amount: 2
   description: Recipe for cages

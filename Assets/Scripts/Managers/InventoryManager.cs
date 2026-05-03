@@ -99,6 +99,13 @@ public class InventoryManager : MonoBehaviour
                     seeds[itemName] = amount;
                 Debug.Log($"[InventoryManager] Seed stored: '{itemName}' = {seeds[itemName]}");
                 break;
+            case ItemType.FlowerSeeds:
+                if (seeds.ContainsKey(itemName))
+                    seeds[itemName] += amount;
+                else
+                    seeds[itemName] = amount;
+                Debug.Log($"[InventoryManager] Flower seed stored: '{itemName}' = {seeds[itemName]}");
+                break;
             case ItemType.Material:
                 if (itemName.ToLower() == "clay")
                     totalClay += amount;
@@ -186,6 +193,14 @@ public class InventoryManager : MonoBehaviour
                         seeds.Remove(itemName);
                 }
                 break;
+            case ItemType.FlowerSeeds:
+                if (seeds.ContainsKey(itemName))
+                {
+                    seeds[itemName] -= amount;
+                    if (seeds[itemName] <= 0)
+                        seeds.Remove(itemName);
+                }
+                break;
             case ItemType.Material:
                 if (itemName.ToLower() == "clay")
                 {
@@ -246,20 +261,24 @@ public class InventoryManager : MonoBehaviour
                 return totalWater;
             case ItemType.Seed:
                 return seeds.ContainsKey(itemName) ? seeds[itemName] : 0;
+            case ItemType.FlowerSeeds:
+                return seeds.ContainsKey(itemName) ? seeds[itemName] : 0;
             case ItemType.Material:
                 if (itemName.ToLower() == "clay")
                     return totalClay;
-                break;
+                // Fall through to check items list for other materials
+                return items.Where(i => i.itemName == itemName && i.itemType == itemType)
+                           .Sum(i => i.amount);
             case ItemType.Wood:
                 if (itemName.ToLower() == "wood")
                     return totalWood;
-                break;
+                // Fall through to check items list for other wood types
+                return items.Where(i => i.itemName == itemName && i.itemType == itemType)
+                           .Sum(i => i.amount);
             default:
                 return items.Where(i => i.itemName == itemName && i.itemType == itemType)
                            .Sum(i => i.amount);
         }
-
-        return 0; // Added missing return path
     }
 
     /// <summary>
@@ -279,6 +298,8 @@ public class InventoryManager : MonoBehaviour
             case ItemType.Water:
                 return maxWaterStack;
             case ItemType.Seed:
+                return maxSeedStack;
+            case ItemType.FlowerSeeds:
                 return maxSeedStack;
             default:
                 return defaultMaxStack;

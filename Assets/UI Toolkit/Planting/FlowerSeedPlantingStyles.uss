@@ -1,0 +1,57 @@
+/* Flower Seed Planting UI Styles */
+
+.flower-seed-entry {
+    flex-direction: row;
+    margin-bottom: 10px;
+    padding: 5px;
+    align-items: center;
+    border: 1px solid rgba(200, 200, 200, 0.3);
+    border-radius: 4px;
+}
+
+.flower-icon {
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 4px;
+}
+
+.flower-name {
+    flex: 1;
+    font-size: 14px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: bold;
+    margin-right: 10px;
+}
+
+.flower-amount {
+    font-size: 12px;
+    color: rgba(200, 200, 200, 0.8);
+    margin-right: 10px;
+    min-width: 80px;
+    text-align: right;
+}
+
+.plant-button {
+    width: 60px;
+    height: 30px;
+    background-color: rgba(100, 150, 100, 0.8);
+    border: 1px solid rgba(150, 200, 150, 0.6);
+    border-radius: 4px;
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 12px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.plant-button:hover {
+    background-color: rgba(120, 170, 120, 0.9);
+}
+
+.plant-button:disabled {
+    background-color: rgba(100, 100, 100, 0.5);
+    border-color: rgba(100, 100, 100, 0.3);
+    color: rgba(150, 150, 150, 0.6);
+    cursor: default;
+}

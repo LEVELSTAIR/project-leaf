@@ -17,6 +17,7 @@ TagManager:
   - GardenTree
   - NightSeed
   - well
+  - Soil
   layers:
   - Default
   - TransparentFX
@@ -35,7 +36,7 @@ TagManager:
   - BadLand
   - SafeZone
   - Cage
-  - 
+  - Soil
   - 
   - 
   - 

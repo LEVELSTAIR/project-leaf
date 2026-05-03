@@ -13,6 +13,7 @@ public class TreeGrassTerrainArea : MonoBehaviour
 
     private TreeOxygenArea oxygenArea;
     private Terrain terrain;
+    private static bool hasInitialClear = false;  // Prevents multiple clears
 
     public int DetailPrototypeIndex
     {
@@ -31,11 +32,13 @@ public class TreeGrassTerrainArea : MonoBehaviour
             Debug.LogError("No terrain found!");
         else
         {
-            // In editor mode, clear the grass before spawning fresh
+            // In editor mode, clear the entire terrain ONLY ONCE before any trees spawn grass
             #if UNITY_EDITOR
-            if (clearGrassInEditor)
+            if (clearGrassInEditor && !hasInitialClear)
             {
-                ClearGrassDetail();
+                ClearAllGrassOnTerrain();
+                hasInitialClear = true;
+                Debug.Log("[TreeGrass] Initial terrain clear completed. Now spawning grass for all trees.");
             }
             #endif
 
@@ -52,10 +55,9 @@ public class TreeGrassTerrainArea : MonoBehaviour
     }
 
     /// <summary>
-    /// Clears all grass from the detail layer on the entire terrain.
-    /// Used in editor mode to reset grass before spawning fresh.
+    /// Clears the entire detail layer on the terrain (called once during initialization).
     /// </summary>
-    private void ClearGrassDetail()
+    private void ClearAllGrassOnTerrain()
     {
         if (terrain == null || terrain.terrainData == null)
             return;
@@ -74,7 +76,62 @@ public class TreeGrassTerrainArea : MonoBehaviour
         // Set the detail layer to empty
         terrainData.SetDetailLayer(0, 0, detailPrototypeIndex, emptyDetails);
 
-        Debug.Log($"[TreeGrass] Cleared grass detail layer {detailPrototypeIndex} on terrain '{terrain.name}'");
+        Debug.Log($"[TreeGrass] Cleared entire grass detail layer {detailPrototypeIndex} on terrain '{terrain.name}'");
+    }
+
+    /// <summary>
+    /// Clears grass only in a specific area around a tree.
+    /// Use this if you want to remove a tree's grass without affecting others.
+    /// </summary>
+    public void ClearGrassAroundTree(float radius)
+    {
+        if (terrain == null || terrain.terrainData == null)
+            return;
+
+        TerrainData terrainData = terrain.terrainData;
+
+        if (detailPrototypeIndex >= terrainData.detailPrototypes.Length)
+            return;
+
+        Vector3 treeWorldPos = transform.position;
+        Vector3 terrainPos = treeWorldPos - terrain.transform.position;
+
+        int detailWidth = terrainData.detailWidth;
+        int detailHeight = terrainData.detailHeight;
+
+        float normX = terrainPos.x / terrainData.size.x;
+        float normZ = terrainPos.z / terrainData.size.z;
+
+        int centerX = Mathf.RoundToInt(normX * detailWidth);
+        int centerY = Mathf.RoundToInt(normZ * detailHeight);
+
+        float pixelsPerMeterX = detailWidth / terrainData.size.x;
+        float pixelsPerMeterZ = detailHeight / terrainData.size.z;
+        float avgPixelsPerMeter = (pixelsPerMeterX + pixelsPerMeterZ) * 0.5f;
+        int pixelRadius = Mathf.RoundToInt(radius * avgPixelsPerMeter);
+
+        int[,] details = terrainData.GetDetailLayer(0, 0, detailWidth, detailHeight, detailPrototypeIndex);
+
+        // Clear only the circular area around this tree
+        for (int y = -pixelRadius; y <= pixelRadius; y++)
+        {
+            for (int x = -pixelRadius; x <= pixelRadius; x++)
+            {
+                int px = centerX + x;
+                int py = centerY + y;
+                if (px < 0 || px >= detailWidth || py < 0 || py >= detailHeight)
+                    continue;
+
+                float dist = Mathf.Sqrt(x * x + y * y) / (float)pixelRadius;
+                if (dist <= 1f)
+                {
+                    details[py, px] = 0;  // Clear this pixel
+                }
+            }
+        }
+
+        terrainData.SetDetailLayer(0, 0, detailPrototypeIndex, details);
+        Debug.Log($"[TreeGrass] Cleared grass area around tree '{name}'");
     }
 
     private void SpawnGrassDetail()

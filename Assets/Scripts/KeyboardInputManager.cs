@@ -55,6 +55,7 @@ public class KeyboardInputManager : MonoBehaviour
     [SerializeField] private bool isBookLogOpen = false;
     [SerializeField] private bool isMapEnlarged = false;
     [SerializeField] private bool isCraftOpen = false;
+    [SerializeField] private bool isPlantingOpen = false;
     [SerializeField] private bool isEscapeMenuOpen = false;
     [SerializeField] private int currentHotbarSlot = 1;
 
@@ -62,9 +63,10 @@ public class KeyboardInputManager : MonoBehaviour
     public bool IsBookLogOpen => isBookLogOpen;
     public bool IsMapEnlarged => isMapEnlarged;
     public bool IsCraftOpen => isCraftOpen;
+    public bool IsPlantingOpen => isPlantingOpen;
     public bool IsEscapeMenuOpen => isEscapeMenuOpen;
     public int CurrentHotbarSlot => currentHotbarSlot;
-    public bool IsAnyPanelOpen => isInventoryOpen || isBookLogOpen || isMapEnlarged || isCraftOpen || isEscapeMenuOpen;
+    public bool IsAnyPanelOpen => isInventoryOpen || isBookLogOpen || isMapEnlarged || isCraftOpen || isPlantingOpen || isEscapeMenuOpen;
     #endregion
 
     #region Escape Menu UI References
@@ -274,7 +276,8 @@ public class KeyboardInputManager : MonoBehaviour
     /// </summary>
     private void UpdateCursorState()
     {
-        bool isCurrentlyPlacing = CraftingController.Instance != null && CraftingController.Instance.IsCurrentlyPlacing();
+        bool isCurrentlyPlacing = (CraftingController.Instance != null && CraftingController.Instance.IsCurrentlyPlacing()) || 
+                                  (FlowerSeedPlantingController.Instance != null && FlowerSeedPlantingController.Instance.IsCurrentlyPlacing());
         bool shouldShowCursor = IsAnyPanelOpen && !isCurrentlyPlacing;
         UnityEngine.Cursor.lockState = shouldShowCursor ? CursorLockMode.None : CursorLockMode.Locked;
         UnityEngine.Cursor.visible = shouldShowCursor;
@@ -436,6 +439,19 @@ public class KeyboardInputManager : MonoBehaviour
             isCraftOpen = open;
             UpdateCursorState();
             Debug.Log($"[Input] Craft state set to: {isCraftOpen}");
+        }
+    }
+
+    /// <summary>
+    /// Set the planting UI open state directly. Used when external systems control planting UI.
+    /// </summary>
+    public void SetPlantingOpen(bool open)
+    {
+        if (isPlantingOpen != open)
+        {
+            isPlantingOpen = open;
+            UpdateCursorState();
+            Debug.Log($"[Input] Planting state set to: {isPlantingOpen}");
         }
     }
     #endregion

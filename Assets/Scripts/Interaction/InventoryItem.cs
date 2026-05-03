@@ -34,6 +34,8 @@ public class InventoryItem
 public enum ItemType
 {
     Seed,
+    FlowerSeeds,
+    Trees,
     Water,
     Gold,
     Tool,

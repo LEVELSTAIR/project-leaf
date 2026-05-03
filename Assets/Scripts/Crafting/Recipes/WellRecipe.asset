@@ -18,6 +18,6 @@ MonoBehaviour:
   parentTransform: {fileID: 0}
   requiredResources:
   - itemName: clay
-    itemType: 6
+    itemType: 8
     amount: 20
   description: 

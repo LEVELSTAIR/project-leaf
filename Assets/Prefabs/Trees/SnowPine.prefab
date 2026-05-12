@@ -219,7 +219,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53807cbf1cc80aa4a878be26e735dc22, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TreeGrassTerrainArea
-  detailPrototypeIndex: 0
+  detailPrototypeIndex: 4
   density: 400
   noiseDensity: 0.1
   minHeight: 80

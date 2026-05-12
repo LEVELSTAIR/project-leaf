@@ -10,7 +10,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 6971673183582946558, guid: 8326860c8f3855147a7af6db3700b171, type: 3}
       propertyPath: m_Name
-      value: Pine (1) Variant
+      value: IntermediatePine
+      objectReference: {fileID: 0}
+    - target: {fileID: 6971673183582946558, guid: 8326860c8f3855147a7af6db3700b171, type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 7749440958028340804, guid: 8326860c8f3855147a7af6db3700b171, type: 3}
       propertyPath: m_LocalScale.x

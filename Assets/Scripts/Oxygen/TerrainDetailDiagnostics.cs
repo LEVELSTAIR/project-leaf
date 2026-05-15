@@ -8,7 +8,6 @@ public class TerrainDetailDiagnostics : MonoBehaviour
 {
     [Header("Diagnostics")]
     [SerializeField] private bool runDiagnosticsOnStart = true;
-    [SerializeField] private bool fixTerrainSettings = false;
 
     private void Start()
     {

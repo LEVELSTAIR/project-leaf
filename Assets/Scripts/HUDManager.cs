@@ -202,16 +202,17 @@ public class HUDManager : MonoBehaviour
     {
         if (root == null) return;
 
-        // Try to find existing UI elements
-        goldDisplayLabel = root.Q<Label>("GoldLabel");
-        waterDisplayLabel = root.Q<Label>("WaterLabel");
+        // Try to find existing UI elements (bottom amount labels)
+        goldDisplayLabel = root.Q<Label>("GoldValue");
+        waterDisplayLabel = root.Q<Label>("WaterValue");
+        clayDisplayLabel = root.Q<Label>("ClayValue");
         seedsContainer = root.Q<VisualElement>("SeedsContainer");
 
         // Create default gold display if not found
         if (goldDisplayLabel == null)
         {
-            goldDisplayLabel = new Label("💰 Gold: 0");
-            goldDisplayLabel.name = "GoldLabel";
+            goldDisplayLabel = new Label("0");
+            goldDisplayLabel.name = "GoldValue";
             goldDisplayLabel.style.position = Position.Absolute;
             goldDisplayLabel.style.top = 10;
             goldDisplayLabel.style.right = 10;
@@ -233,8 +234,8 @@ public class HUDManager : MonoBehaviour
         // Create default water display if not found
         if (waterDisplayLabel == null)
         {
-            waterDisplayLabel = new Label("💧 Water: 0");
-            waterDisplayLabel.name = "WaterLabel";
+            waterDisplayLabel = new Label("0");
+            waterDisplayLabel.name = "WaterValue";
             waterDisplayLabel.style.position = Position.Absolute;
             waterDisplayLabel.style.top = 45;
             waterDisplayLabel.style.right = 10;
@@ -434,7 +435,7 @@ public class HUDManager : MonoBehaviour
     {
         if (goldDisplayLabel != null)
         {
-            goldDisplayLabel.text = $"💰 Gold: {goldAmount}";
+            goldDisplayLabel.text = goldAmount.ToString();
         }
     }
 
@@ -445,7 +446,7 @@ public class HUDManager : MonoBehaviour
     {
         if (waterDisplayLabel != null)
         {
-            waterDisplayLabel.text = $"💧 Water: {waterAmount}";
+            waterDisplayLabel.text = waterAmount.ToString();
         }
     }
 
@@ -456,7 +457,7 @@ public class HUDManager : MonoBehaviour
     {
         if (clayDisplayLabel != null)
         {
-            clayDisplayLabel.text = $"⛏️ Clay: {clayAmount}";
+            clayDisplayLabel.text = clayAmount.ToString();
         }
     }
 

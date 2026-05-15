@@ -1,6 +1,5 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEngine;
 
 [CreateAssetMenu(fileName = "New Seed", menuName = "Farming/Seed Data")]
 public class SeedData : ScriptableObject

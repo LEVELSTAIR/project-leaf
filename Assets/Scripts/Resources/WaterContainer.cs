@@ -3,7 +3,6 @@ using UnityEngine;
 public class WaterContainer : MonoBehaviour, IInteractable
 {
     [Header("Water Settings")]
-    [SerializeField] private string containerName = "Water Barrel";
     [SerializeField] private int waterAmount = 100;
     [SerializeField] private int refillAmount = 10;
 

@@ -332,12 +332,13 @@ public class FirstPersonController : MonoBehaviour
                 isZoomed = false;
                 playerCamera.fieldOfView = Mathf.Lerp(playerCamera.fieldOfView, sprintFOV, sprintFOVStepTime * Time.deltaTime);
 
-                // Drain sprint remaining while sprinting
+                // Drain sprint remaining while sprinting (slow drain)
                 if(!unlimitedSprint)
                 {
-                    sprintRemaining -= 1 * Time.deltaTime;
+                    sprintRemaining -= 1.0f * Time.deltaTime;
                     if (sprintRemaining <= 0)
                     {
+                        sprintRemaining = 0;
                         isSprinting = false;
                         isSprintCooldown = true;
                     }
@@ -345,8 +346,8 @@ public class FirstPersonController : MonoBehaviour
             }
             else
             {
-                // Regain sprint while not sprinting (0-100% in 5 seconds)
-                sprintRemaining = Mathf.Clamp(sprintRemaining += (sprintDuration / 5f) * Time.deltaTime, 0, sprintDuration);
+                // Regen slowly when not sprinting (half the drain rate)
+                sprintRemaining = Mathf.Min(sprintRemaining + 0.5f * Time.deltaTime, sprintDuration);
             }
 
             // Handles sprint cooldown 

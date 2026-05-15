@@ -15,10 +15,10 @@ public class HUDManager : MonoBehaviour
 
     private VisualElement root;
 
-    // Status Bars
-    private VisualElement healthFill;
-    private VisualElement staminaFill;
-    private VisualElement oxygenFill;
+    // Status Values
+    private Label healthValueLabel;
+    private Label staminaValueLabel;
+    private Label oxygenValueLabel;
 
     // Clock
     private Label timeLabel;
@@ -100,9 +100,9 @@ public class HUDManager : MonoBehaviour
         if (root == null) return;
 
         // Find existing UI elements
-        healthFill = root.Q<VisualElement>("HealthFill");
-        staminaFill = root.Q<VisualElement>("StaminaFill");
-        oxygenFill = root.Q<VisualElement>("OxygenFill");
+        healthValueLabel = root.Q<Label>("HealthValue");
+        staminaValueLabel = root.Q<Label>("StaminaValue");
+        oxygenValueLabel = root.Q<Label>("OxygenValue");
         timeLabel = root.Q<Label>("TimeLabel");
 
         // Initialize Hotbar slots
@@ -351,19 +351,19 @@ public class HUDManager : MonoBehaviour
 
     public void UpdateStamina(float percentage)
     {
-        if (staminaFill != null)
+        if (staminaValueLabel != null)
         {
             float pct = Mathf.Clamp01(percentage);
-            staminaFill.style.width = Length.Percent(pct * 100f);
+            staminaValueLabel.text = $"{Mathf.RoundToInt(pct * 100f)}%";
         }
     }
 
     public void UpdateHealth(float percentage)
     {
-        if (healthFill != null)
+        if (healthValueLabel != null)
         {
             float pct = Mathf.Clamp01(percentage);
-            healthFill.style.width = Length.Percent(pct * 100f);
+            healthValueLabel.text = $"{Mathf.RoundToInt(pct * 100f)}%";
         }
     }
 
@@ -377,10 +377,10 @@ public class HUDManager : MonoBehaviour
 
     public void UpdateOxygen(float percentage)
     {
-        if (oxygenFill != null)
+        if (oxygenValueLabel != null)
         {
             float pct = Mathf.Clamp01(percentage);
-            oxygenFill.style.width = Length.Percent(pct * 100f);
+            oxygenValueLabel.text = $"{Mathf.RoundToInt(pct * 100f)}%";
         }
     }
 

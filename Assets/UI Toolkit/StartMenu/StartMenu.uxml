@@ -1,0 +1,5 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI%20Toolkit/GlassTheme.uss?fileID=7433441132597879392&amp;guid=03998e6826707b944954e041c886f580&amp;type=3#GlassTheme"/>
+    <ui:Button text="Start&#10;" name="Start" class="glass-button" style="position: relative; top: 480px; left: 1100px; width: 206px; height: 40px;"/>
+    <ui:Button text="Quit&#10;" name="Quit" class="glass-button" style="position: relative; top: 466px; left: 1100px; width: 206px; height: 40px;"/>
+</ui:UXML>

@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 10cfb0c2ee3c3854dba97b89400fdee2
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 381418
+  packageName: Tree Monster
+  packageVersion: 1.0
+  assetPath: Assets/Tree Monster/Animations/idle.anim
+  uploadId: 919552

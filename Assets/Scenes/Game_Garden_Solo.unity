@@ -345325,7 +345325,7 @@ MonoBehaviour:
   falloffInnerRadius: 0.5
   falloffOuterRadius: 0.98
   flatPlains:
-  - name: Plain_Sphere
+  - name: Plain_HomeArea
     polygonPoints:
     - {x: 0.4925293, y: 0.6694575}
     - {x: 0.49182564, y: 0.6766019}

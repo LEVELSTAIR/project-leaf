@@ -27,7 +27,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 552.5843, y: 11.40446, z: 503.36176}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalScale: {x: 1.5, y: 1.5, z: 1.5}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3231433321014256919}
@@ -50,6 +50,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c27c27b19e61e71478e917e8f6bb4072, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlantCageController
+  snapPoint: {fileID: 0}
+  isOccupied: 0
 --- !u!1 &1628624239566277927
 GameObject:
   m_ObjectHideFlags: 0
@@ -113,6 +115,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3979345482366620446}
   - component: {fileID: 3719135451915639774}
+  - component: {fileID: 8920030354296259662}
   m_Layer: 16
   m_Name: Inside Zone
   m_TagString: Untagged
@@ -154,8 +157,23 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.8, y: 2, z: 1.8}
-  m_Center: {x: 0, y: 0, z: 0}
+  m_Size: {x: 1.8, y: 3.5757308, z: 1.8}
+  m_Center: {x: 0, y: 0.7878641, z: 0}
+--- !u!114 &8920030354296259662
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5787970340858102338}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 031a9b536603d8d41a9ae1fa614eb33e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CageTrap
+  destroyOnCapture: 0
+  captureEffect: {fileID: 0}
+  evilTreeTag: EvilTree
 --- !u!1001 &5431881530087037007
 PrefabInstance:
   m_ObjectHideFlags: 0

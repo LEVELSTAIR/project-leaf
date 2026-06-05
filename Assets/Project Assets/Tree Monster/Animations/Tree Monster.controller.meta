@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: b7e0106bd34480945947519ea81db92a
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 9100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 381418
+  packageName: Tree Monster
+  packageVersion: 1.0
+  assetPath: Assets/Tree Monster/Animations/Tree Monster.controller
+  uploadId: 919552

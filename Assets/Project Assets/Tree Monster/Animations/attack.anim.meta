@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 5eec51f206f376b43af97ef7bd5ee7b6
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 7400000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 381418
+  packageName: Tree Monster
+  packageVersion: 1.0
+  assetPath: Assets/Tree Monster/Animations/attack.anim
+  uploadId: 919552

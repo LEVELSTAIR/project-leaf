@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.UIElements;
 using System.Collections.Generic;
 using System.Collections;
@@ -13,7 +13,13 @@ public class HUDManager : MonoBehaviour
     [Header("Mini Map")]
     public RenderTexture miniMapTexture;
 
+    [Header("Damage Flash")]
+    [SerializeField] private float flashDuration = 0.2f;
+    [SerializeField] private Color flashColor = new Color(1f, 0f, 0f, 0.6f);
+
     private VisualElement root;
+    private VisualElement damageOverlay;
+    private Coroutine flashCoroutine;
 
     // Status Values
     private Label healthValueLabel;
@@ -67,6 +73,7 @@ public class HUDManager : MonoBehaviour
         {
             root = uiDocument.rootVisualElement;
             InitializeUI();
+            CreateDamageOverlay();   // NEW: creates the red flash overlay
         }
         else
         {
@@ -92,6 +99,10 @@ public class HUDManager : MonoBehaviour
         if (messageCoroutine != null)
         {
             StopCoroutine(messageCoroutine);
+        }
+        if (flashCoroutine != null)
+        {
+            StopCoroutine(flashCoroutine);
         }
     }
 
@@ -222,8 +233,8 @@ public class HUDManager : MonoBehaviour
             goldDisplayLabel.style.backgroundColor = new Color(0, 0, 0, 0.6f);
             goldDisplayLabel.style.paddingTop = 5;
             goldDisplayLabel.style.paddingBottom = 5;
-            goldDisplayLabel.style.paddingLeft = 10;      // Fixed: paddingLeft (lowercase)
-            goldDisplayLabel.style.paddingRight = 10;     // Fixed: paddingRight (lowercase)
+            goldDisplayLabel.style.paddingLeft = 10;
+            goldDisplayLabel.style.paddingRight = 10;
             goldDisplayLabel.style.borderTopLeftRadius = 5;
             goldDisplayLabel.style.borderTopRightRadius = 5;
             goldDisplayLabel.style.borderBottomLeftRadius = 5;
@@ -245,8 +256,8 @@ public class HUDManager : MonoBehaviour
             waterDisplayLabel.style.backgroundColor = new Color(0, 0, 0, 0.6f);
             waterDisplayLabel.style.paddingTop = 5;
             waterDisplayLabel.style.paddingBottom = 5;
-            waterDisplayLabel.style.paddingLeft = 10;     // Fixed: paddingLeft (lowercase)
-            waterDisplayLabel.style.paddingRight = 10;    // Fixed: paddingRight (lowercase)
+            waterDisplayLabel.style.paddingLeft = 10;
+            waterDisplayLabel.style.paddingRight = 10;
             waterDisplayLabel.style.borderTopLeftRadius = 5;
             waterDisplayLabel.style.borderTopRightRadius = 5;
             waterDisplayLabel.style.borderBottomLeftRadius = 5;
@@ -606,4 +617,54 @@ public class HUDManager : MonoBehaviour
         return false;
     }
 
+    // ---------- NEW: Damage Flash Overlay ----------
+    private void CreateDamageOverlay()
+    {
+        if (root == null) return;
+
+        damageOverlay = new VisualElement();
+        damageOverlay.name = "DamageOverlay";
+        damageOverlay.style.position = Position.Absolute;
+        damageOverlay.style.top = 0;
+        damageOverlay.style.left = 0;
+        damageOverlay.style.right = 0;
+        damageOverlay.style.bottom = 0;
+        damageOverlay.style.backgroundColor = flashColor;
+        damageOverlay.style.opacity = 0;
+        damageOverlay.pickingMode = PickingMode.Ignore;
+        damageOverlay.style.display = DisplayStyle.None;
+        root.Add(damageOverlay);
+    }
+
+    /// <summary>
+    /// Show a red flash overlay (called when player takes damage).
+    /// </summary>
+    public void ShowDamageFlash()
+    {
+        if (damageOverlay == null) return;
+
+        if (flashCoroutine != null)
+            StopCoroutine(flashCoroutine);
+        flashCoroutine = StartCoroutine(DamageFlashRoutine());
+    }
+
+    private IEnumerator DamageFlashRoutine()
+    {
+        damageOverlay.style.display = DisplayStyle.Flex;
+        damageOverlay.style.opacity = flashColor.a;
+
+        float elapsed = 0f;
+        while (elapsed < flashDuration)
+        {
+            elapsed += Time.deltaTime;
+            float t = elapsed / flashDuration;
+            float newAlpha = Mathf.Lerp(flashColor.a, 0f, t);
+            damageOverlay.style.opacity = newAlpha;
+            yield return null;
+        }
+
+        damageOverlay.style.opacity = 0;
+        damageOverlay.style.display = DisplayStyle.None;
+        flashCoroutine = null;
+    }
 }

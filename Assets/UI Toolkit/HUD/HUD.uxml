@@ -1,6 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
-    <Style src="project://database/Assets/UI%20Toolkit/GlassTheme.uss?fileID=7433441132597879392&amp;guid=03998e6826707b944954e041c886f580&amp;type=3"/>
-    <Style src="project://database/Assets/UI%20Toolkit/HUD/HUD.uss?fileID=7433441132597879392&amp;guid=1ca10815095676f48a1cf3f6b213ff0c&amp;type=3"/>
+    <Style src="project://database/Assets/UI%20Toolkit/GlassTheme.uss?fileID=7433441132597879392&amp;guid=03998e6826707b944954e041c886f580&amp;type=3#GlassTheme"/>
+    <Style src="project://database/Assets/UI%20Toolkit/HUD/HUD.uss?fileID=7433441132597879392&amp;guid=1ca10815095676f48a1cf3f6b213ff0c&amp;type=3#HUD"/>
     <ui:VisualElement name="Root" picking-mode="Ignore" style="flex-grow: 1; justify-content: space-between; flex-direction: column; padding: 20px;">
         <ui:VisualElement name="TopRow" style="flex-direction: row; justify-content: space-between; align-items: flex-start; width: 100%;">
             <ui:VisualElement name="CurrencyContainer" class="glass-panel" style="flex-direction: column; align-items: flex-start; min-width: 150px; display: none;">
@@ -31,7 +31,7 @@
                 </ui:VisualElement>
             </ui:VisualElement>
         </ui:VisualElement>
-        <ui:VisualElement name="SeedsDisplay" style="position: absolute; left: 20px; top: 50%; flex-direction: column; align-items: flex-start;">
+        <ui:VisualElement name="SeedsDisplay" style="position: absolute; left: 20px; top: 50%; flex-direction: column; align-items: flex-start; visibility: hidden; display: flex;">
             <ui:VisualElement name="SeedsContainer" style="flex-direction: column;"/>
         </ui:VisualElement>
         <ui:VisualElement name="MapContainer" class="glass-panel" style="position: absolute; top: auto; right: auto; width: 300px; height: 300px; padding: 0; align-items: center; justify-content: center; border-top-left-radius: 150px; border-top-right-radius: 150px; border-bottom-right-radius: 150px; border-bottom-left-radius: 150px; border-top-width: 10px; border-right-width: 10px; border-bottom-width: 10px; border-left-width: 10px; border-left-color: rgb(255, 255, 255); border-right-color: rgb(255, 255, 255); border-top-color: rgb(255, 255, 255); border-bottom-color: rgb(255, 255, 255); left: 2%; bottom: 3%;">

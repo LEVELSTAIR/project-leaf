@@ -1,4 +1,4 @@
-/*using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
@@ -15,8 +15,22 @@ public class RiverDefinition
     };
 }
 
+[System.Serializable]
+public class FlatPlainDefinition
+{
+    public string name = "Plain";
+    public List<Vector2> polygonPoints = new List<Vector2>()
+    {
+        new Vector2(0.4f, 0.4f),
+        new Vector2(0.6f, 0.4f),
+        new Vector2(0.6f, 0.6f),
+        new Vector2(0.4f, 0.6f)
+    };
+    [Range(0f, 1f)] public float height = 0.2f;
+}
+
 [RequireComponent(typeof(Terrain))]
-public class TerrainGeneratorWithRivers : MonoBehaviour
+public class TerrainGeneratorNew : MonoBehaviour
 {
     [Header("General")]
     public int seed = 42;
@@ -46,6 +60,13 @@ public class TerrainGeneratorWithRivers : MonoBehaviour
     [Range(0f, 1f)] public float falloffInnerRadius = 0.5f;
     [Range(0f, 1f)] public float falloffOuterRadius = 0.98f;
 
+    [Header("Flat Plains")]
+    public List<FlatPlainDefinition> flatPlains = new List<FlatPlainDefinition>();
+
+    [Header("Plain From Assigned Object")]
+    public GameObject assignedObjectForPlain;
+    [Range(0f, 1f)] public float assignedObjectPlainHeight = 0.2f;
+
     [Header("Rivers")]
     public bool carveRivers = true;
     public List<RiverDefinition> rivers = new List<RiverDefinition>();
@@ -53,7 +74,7 @@ public class TerrainGeneratorWithRivers : MonoBehaviour
     [Range(0.001f, 0.1f)] public float riverWidth = 0.02f;
     [Range(10, 100)] public int riverSplineSteps = 50;
 
-    // ---------- Jobs ----------
+    // ---------- Jobs (same as before) ----------
     [BurstCompile]
     struct HeightNoiseJob : IJobParallelFor
     {
@@ -118,10 +139,10 @@ public class TerrainGeneratorWithRivers : MonoBehaviour
     [BurstCompile]
     struct RiverCarveJob : IJobParallelFor
     {
-        public int width;                         // heightmap resolution
-        public float halfWidth;                   // river half‑width in pixels
+        public int width;
+        public float halfWidth;
         public float depth;
-        [ReadOnly] public NativeArray<float2> pathPoints;   // dense path in pixel coordinates
+        [ReadOnly] public NativeArray<float2> pathPoints;
         public NativeArray<float> heightmap;
 
         public void Execute(int i)
@@ -143,7 +164,6 @@ public class TerrainGeneratorWithRivers : MonoBehaviour
             {
                 float dist = math.sqrt(minDistSq);
                 float t = dist / halfWidth;
-                // Gaussian profile: 1 in centre, ~0 at edge
                 float carveFactor = math.exp(-t * t * 3f);
                 heightmap[i] = math.max(heightmap[i] - depth * carveFactor, 0f);
             }
@@ -166,7 +186,7 @@ public class TerrainGeneratorWithRivers : MonoBehaviour
         public int width, heightmapRes;
         [ReadOnly] public NativeArray<float> heightmap, moisture;
         public float snowHeight, lowElevationMax, dryMoistureMax;
-        public NativeArray<float4> weights; // x:grass, y:snow, z:desert, w:lush
+        public NativeArray<float4> weights;
 
         public void Execute(int i)
         {
@@ -198,19 +218,24 @@ public class TerrainGeneratorWithRivers : MonoBehaviour
         }
     }
 
-    // ---------- Unity callbacks ----------
-    Terrain terrain;
-    TerrainData terrainData;
-
-    void Awake()
-    {
-        terrain = GetComponent<Terrain>();
-        terrainData = terrain.terrainData;
-        Generate();
-    }
-
+    // ---------- Public Methods ----------
+    [ContextMenu("Generate Terrain")]
     public void Generate()
     {
+        Terrain terrain = GetComponent<Terrain>();
+        if (terrain == null)
+        {
+            Debug.LogError("TerrainGeneratorNew: No Terrain component found on this GameObject.");
+            return;
+        }
+
+        TerrainData terrainData = terrain.terrainData;
+        if (terrainData == null)
+        {
+            Debug.LogError("TerrainGeneratorNew: TerrainData is missing.");
+            return;
+        }
+
         terrainData.heightmapResolution = heightmapResolution;
         terrainData.alphamapResolution = alphamapResolution;
         terrainData.size = new Vector3(terrainSize, terrainHeight, terrainSize);
@@ -220,7 +245,7 @@ public class TerrainGeneratorWithRivers : MonoBehaviour
         float2 mOff = rand.NextFloat2(-100000f, 100000f);
         int total = heightmapResolution * heightmapResolution;
 
-        // Height
+        // 1. Height noise
         NativeArray<float> rawHeight = new NativeArray<float>(total, Allocator.TempJob);
         new HeightNoiseJob
         {
@@ -231,34 +256,34 @@ public class TerrainGeneratorWithRivers : MonoBehaviour
             lacunarity = lacunarity,
             offset = hOff,
             heightmap = rawHeight
-        }
-            .Schedule(total, 256).Complete();
+        }.Schedule(total, 256).Complete();
 
-        // Falloff
+        // 2. Falloff
         NativeArray<float> falloff = new NativeArray<float>(total, Allocator.TempJob);
         BuildFalloff(falloff);
         new FalloffMultiplyJob { width = heightmapResolution, heightmap = rawHeight, falloff = falloff }
             .Schedule(total, 256).Complete();
         falloff.Dispose();
 
-        // Rivers
+        // 3. Flat plains
+        if (flatPlains != null && flatPlains.Count > 0)
+        {
+            ApplyFlatPlains(rawHeight, heightmapResolution);
+        }
+
+        // 4. Rivers
         if (carveRivers && rivers != null)
         {
-            float pixelHalfWidth = riverWidth * heightmapResolution; // half‑width in pixels
-
+            float pixelHalfWidth = riverWidth * heightmapResolution;
             foreach (var river in rivers)
             {
                 if (river.controlPoints.Count < 2) continue;
-
-                // Build smooth spline in UV space
                 NativeArray<Vector2> uvPath = BuildSplinePoints(river.controlPoints, riverSplineSteps);
                 if (uvPath.Length < 2)
                 {
                     uvPath.Dispose();
                     continue;
                 }
-
-                // Convert to pixel coordinates
                 NativeArray<float2> pixelPath = new NativeArray<float2>(uvPath.Length, Allocator.TempJob);
                 float scale = (float)(heightmapResolution - 1);
                 for (int i = 0; i < uvPath.Length; i++)
@@ -267,8 +292,6 @@ public class TerrainGeneratorWithRivers : MonoBehaviour
                     pixelPath[i] = new float2(uv.x * scale, uv.y * scale);
                 }
                 uvPath.Dispose();
-
-                // Carve
                 var carveJob = new RiverCarveJob
                 {
                     width = heightmapResolution,
@@ -282,14 +305,14 @@ public class TerrainGeneratorWithRivers : MonoBehaviour
             }
         }
 
-        // Apply
+        // Apply heights
         float[,] h2D = new float[heightmapResolution, heightmapResolution];
         for (int y = 0; y < heightmapResolution; y++)
             for (int x = 0; x < heightmapResolution; x++)
                 h2D[y, x] = rawHeight[y * heightmapResolution + x];
         terrainData.SetHeightsDelayLOD(0, 0, h2D);
 
-        // Moisture
+        // 5. Moisture noise
         NativeArray<float> moist = new NativeArray<float>(total, Allocator.TempJob);
         new MoistureNoiseJob
         {
@@ -300,10 +323,9 @@ public class TerrainGeneratorWithRivers : MonoBehaviour
             lacunarity = moistureLacunarity,
             offset = mOff,
             moisture = moist
-        }
-            .Schedule(total, 256).Complete();
+        }.Schedule(total, 256).Complete();
 
-        // Splatmap
+        // 6. Splatmap
         int splatRes = alphamapResolution;
         NativeArray<float4> splatWeights = new NativeArray<float4>(splatRes * splatRes, Allocator.TempJob);
         new SplatmapJob
@@ -316,8 +338,7 @@ public class TerrainGeneratorWithRivers : MonoBehaviour
             lowElevationMax = lowElevationMax,
             dryMoistureMax = dryMoistureMax,
             weights = splatWeights
-        }
-            .Schedule(splatRes * splatRes, 256).Complete();
+        }.Schedule(splatRes * splatRes, 256).Complete();
 
         int layers = terrainData.terrainLayers.Length;
         if (layers >= 4)
@@ -327,18 +348,64 @@ public class TerrainGeneratorWithRivers : MonoBehaviour
                 for (int x = 0; x < splatRes; x++)
                 {
                     float4 w = splatWeights[y * splatRes + x];
-                    alpha[y, x, 0] = w.x; alpha[y, x, 1] = w.y;
-                    alpha[y, x, 2] = w.z; alpha[y, x, 3] = w.w;
+                    alpha[y, x, 0] = w.x;
+                    alpha[y, x, 1] = w.y;
+                    alpha[y, x, 2] = w.z;
+                    alpha[y, x, 3] = w.w;
                 }
             terrainData.SetAlphamaps(0, 0, alpha);
         }
         else Debug.LogError("Assign at least 4 terrain layers (Grass, Snow, Desert, Lush).");
 
-        // Cleanup
-        rawHeight.Dispose(); moist.Dispose(); splatWeights.Dispose();
+        rawHeight.Dispose();
+        moist.Dispose();
+        splatWeights.Dispose();
         terrain.Flush();
     }
 
+    // ---------- Flat Plains Logic ----------
+    void ApplyFlatPlains(NativeArray<float> heightmap, int resolution)
+    {
+        int width = resolution;
+        int height = resolution;
+        float maxCoord = width - 1;
+
+        for (int y = 0; y < height; y++)
+        {
+            for (int x = 0; x < width; x++)
+            {
+                Vector2 uv = new Vector2(x / maxCoord, y / maxCoord);
+                int index = y * width + x;
+
+                foreach (var plain in flatPlains)
+                {
+                    if (plain.polygonPoints.Count < 3) continue;
+                    if (IsPointInPolygon(uv, plain.polygonPoints))
+                    {
+                        heightmap[index] = plain.height;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    bool IsPointInPolygon(Vector2 point, List<Vector2> polygon)
+    {
+        bool inside = false;
+        int count = polygon.Count;
+        for (int i = 0, j = count - 1; i < count; j = i++)
+        {
+            Vector2 vi = polygon[i];
+            Vector2 vj = polygon[j];
+            bool intersect = ((vi.y > point.y) != (vj.y > point.y)) &&
+                             (point.x < (vj.x - vi.x) * (point.y - vi.y) / (vj.y - vi.y) + vi.x);
+            if (intersect) inside = !inside;
+        }
+        return inside;
+    }
+
+    // ---------- Falloff ----------
     void BuildFalloff(NativeArray<float> falloff)
     {
         float half = heightmapResolution * 0.5f;
@@ -353,6 +420,7 @@ public class TerrainGeneratorWithRivers : MonoBehaviour
             }
     }
 
+    // ---------- Spline Helpers ----------
     NativeArray<Vector2> BuildSplinePoints(List<Vector2> pts, int stepsPerSeg)
     {
         if (pts.Count < 2) return new NativeArray<Vector2>(0, Allocator.TempJob);
@@ -380,19 +448,155 @@ public class TerrainGeneratorWithRivers : MonoBehaviour
             (-p0 + 3f * p1 - 3f * p2 + p3) * t3);
     }
 
+    // ---------- Create Plain From 3D Object (core logic) ----------
+    public FlatPlainDefinition CreatePlainUnderObject(GameObject obj, float height, string plainName = "PlainFromObject")
+    {
+        if (obj == null) return null;
+
+        // 1. Try to get a SphereCollider → create circular plain
+        SphereCollider sphere = obj.GetComponent<SphereCollider>();
+        if (sphere != null)
+        {
+            Vector3 center = sphere.bounds.center;
+            float radius = sphere.radius * Mathf.Max(obj.transform.lossyScale.x, obj.transform.lossyScale.z);
+            return CreateCircularPlain(center, radius, height, plainName);
+        }
+
+        // 2. Fallback to rectangular plain (using renderer or collider bounds)
+        Bounds bounds = GetObjectBounds(obj);
+        if (bounds.size.magnitude < 0.01f) return null;
+
+        Terrain terrain = GetComponent<Terrain>();
+        Vector3 terrainPos = terrain.transform.position;
+        Vector3 terrainSize = terrain.terrainData.size;
+
+        float minU = (bounds.min.x - terrainPos.x) / terrainSize.x;
+        float maxU = (bounds.max.x - terrainPos.x) / terrainSize.x;
+        float minV = (bounds.min.z - terrainPos.z) / terrainSize.z;
+        float maxV = (bounds.max.z - terrainPos.z) / terrainSize.z;
+
+        // clamp & validate...
+        List<Vector2> rect = new List<Vector2>
+    {
+        new Vector2(minU, minV),
+        new Vector2(maxU, minV),
+        new Vector2(maxU, maxV),
+        new Vector2(minU, maxV)
+    };
+
+        FlatPlainDefinition plain = new FlatPlainDefinition { name = plainName, polygonPoints = rect, height = height };
+        flatPlains.Add(plain);
+        return plain;
+    }
+
+    // New helper: creates a circular plain (approximated by a polygon with 32 points)
+    private FlatPlainDefinition CreateCircularPlain(Vector3 worldCenter, float worldRadius, float height, string name)
+    {
+        Terrain terrain = GetComponent<Terrain>();
+        Vector3 terrainPos = terrain.transform.position;
+        Vector3 terrainSize = terrain.terrainData.size;
+
+        // Convert world center to UV coordinates
+        float centerU = (worldCenter.x - terrainPos.x) / terrainSize.x;
+        float centerV = (worldCenter.z - terrainPos.z) / terrainSize.z;
+        float radiusU = worldRadius / terrainSize.x;
+        float radiusV = worldRadius / terrainSize.z;
+
+        int segments = 32;
+        List<Vector2> circlePoints = new List<Vector2>();
+        for (int i = 0; i < segments; i++)
+        {
+            float angle = i * Mathf.PI * 2f / segments;
+            float u = centerU + Mathf.Cos(angle) * radiusU;
+            float v = centerV + Mathf.Sin(angle) * radiusV;
+            circlePoints.Add(new Vector2(Mathf.Clamp01(u), Mathf.Clamp01(v)));
+        }
+
+        FlatPlainDefinition plain = new FlatPlainDefinition { name = name, polygonPoints = circlePoints, height = height };
+        flatPlains.Add(plain);
+        return plain;
+    }
+
+    Bounds GetObjectBounds(GameObject obj)
+    {
+        Renderer renderer = obj.GetComponent<Renderer>();
+        if (renderer != null) return renderer.bounds;
+        Collider collider = obj.GetComponent<Collider>();
+        if (collider != null) return collider.bounds;
+        return new Bounds(obj.transform.position, Vector3.one * 0.1f);
+    }
+
+    // ---------- Editor Context Menus ----------
+#if UNITY_EDITOR
+    [ContextMenu("Create Plain From Selected Object")]
+    private void CreatePlainFromSelectedObject_Editor()
+    {
+        if (UnityEditor.Selection.activeGameObject == null)
+        {
+            Debug.LogError("No GameObject selected. Select an object in the Hierarchy.");
+            return;
+        }
+        GameObject selected = UnityEditor.Selection.activeGameObject;
+        CreatePlainUnderObject(selected, assignedObjectPlainHeight, "Plain_" + selected.name);
+        UnityEditor.EditorUtility.SetDirty(this);
+        Debug.Log($"Plain created under '{selected.name}'. Right-click again and select 'Generate Terrain' to apply.");
+    }
+
+    [ContextMenu("Create Plain From Assigned Object")]
+    private void CreatePlainFromAssignedObject_Editor()
+    {
+        if (assignedObjectForPlain == null)
+        {
+            Debug.LogError("No GameObject assigned to 'assignedObjectForPlain' field. Drag a 3D object into that field first.");
+            return;
+        }
+        CreatePlainUnderObject(assignedObjectForPlain, assignedObjectPlainHeight, "Plain_" + assignedObjectForPlain.name);
+        UnityEditor.EditorUtility.SetDirty(this);
+        Debug.Log($"Plain created from assigned object '{assignedObjectForPlain.name}'. Right-click again and select 'Generate Terrain' to apply.");
+    }
+#endif
+
+    // ---------- Gizmos ----------
     void OnDrawGizmos()
     {
-        if (rivers == null) return;
-        foreach (var river in rivers)
+        if (rivers != null)
         {
-            if (river.controlPoints.Count < 2) continue;
-            Gizmos.color = Color.blue;
-            for (int i = 0; i < river.controlPoints.Count - 1; i++)
+            float size = terrainSize;
+            Terrain t = GetComponent<Terrain>();
+            if (t != null && t.terrainData != null)
+                size = t.terrainData.size.x;
+
+            foreach (var river in rivers)
             {
-                Vector3 p1 = new Vector3(river.controlPoints[i].x * terrainSize, 0, river.controlPoints[i].y * terrainSize);
-                Vector3 p2 = new Vector3(river.controlPoints[i + 1].x * terrainSize, 0, river.controlPoints[i + 1].y * terrainSize);
-                Gizmos.DrawLine(p1, p2);
+                if (river.controlPoints.Count < 2) continue;
+                Gizmos.color = Color.blue;
+                for (int i = 0; i < river.controlPoints.Count - 1; i++)
+                {
+                    Vector3 p1 = new Vector3(river.controlPoints[i].x * size, 0, river.controlPoints[i].y * size);
+                    Vector3 p2 = new Vector3(river.controlPoints[i + 1].x * size, 0, river.controlPoints[i + 1].y * size);
+                    Gizmos.DrawLine(p1, p2);
+                }
+            }
+        }
+
+        if (flatPlains != null)
+        {
+            float size = terrainSize;
+            Terrain t = GetComponent<Terrain>();
+            if (t != null && t.terrainData != null)
+                size = t.terrainData.size.x;
+
+            Gizmos.color = Color.green;
+            foreach (var plain in flatPlains)
+            {
+                if (plain.polygonPoints.Count < 3) continue;
+                for (int i = 0; i < plain.polygonPoints.Count; i++)
+                {
+                    Vector3 a = new Vector3(plain.polygonPoints[i].x * size, 0.1f, plain.polygonPoints[i].y * size);
+                    Vector3 b = new Vector3(plain.polygonPoints[(i + 1) % plain.polygonPoints.Count].x * size, 0.1f, plain.polygonPoints[(i + 1) % plain.polygonPoints.Count].y * size);
+                    Gizmos.DrawLine(a, b);
+                }
             }
         }
     }
-}*/
+}

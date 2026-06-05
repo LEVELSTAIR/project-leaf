@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CraftingRecipe
   recipeName: Flower Bed
   icon: {fileID: 0}
-  resultPrefab: {fileID: 2449465093041289693, guid: ff9e3e5c993a0524bb4934a222691e6f, type: 3}
+  resultPrefab: {fileID: 2449465093041289693, guid: fd9a22947f433c04393c911afdf75bcd, type: 3}
   parentTransform: {fileID: 0}
   requiredResources:
   - itemName: clay
     itemType: 8
     amount: 10
-  description: 
+  description: Flower Bed for planting flowers

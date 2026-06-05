@@ -18,6 +18,7 @@ TagManager:
   - NightSeed
   - well
   - Soil
+  - EvilTree
   layers:
   - Default
   - TransparentFX

@@ -48,6 +48,22 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 105.919
       objectReference: {fileID: 0}
+    - target: {fileID: 866387508334610307, guid: 596946adce049204eb665838fa0015dd, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 44.694645
+      objectReference: {fileID: 0}
+    - target: {fileID: 866387508334610307, guid: 596946adce049204eb665838fa0015dd, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: -0.033
+      objectReference: {fileID: 0}
+    - target: {fileID: 866387508334610307, guid: 596946adce049204eb665838fa0015dd, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 866387508334610307, guid: 596946adce049204eb665838fa0015dd, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0.318
+      objectReference: {fileID: 0}
     - target: {fileID: 5818241264881310114, guid: 596946adce049204eb665838fa0015dd, type: 3}
       propertyPath: m_Name
       value: PlayerAxe

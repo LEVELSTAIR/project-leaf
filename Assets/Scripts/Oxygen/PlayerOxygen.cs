@@ -5,17 +5,16 @@ public class PlayerOxygen : MonoBehaviour
 {
     [Header("Oxygen Settings")]
     [SerializeField] private float maxOxygen = 100f;
-    [SerializeField] private float depletionRate = 5f;   // units per second
-    [SerializeField] private float refillRate = 10f;     // units per second (set to 0 for instant refill)
+    [SerializeField] private float depletionRate = 5f;
+    [SerializeField] private float refillRate = 10f;
 
     [Header("Events")]
-    public UnityEvent onOxygenDepleted;   // e.g. damage or kill the player
+    public UnityEvent onOxygenDepleted;
 
-    private int zoneCount = 0;            // how many oxygen zones the player is currently inside
     private float currentOxygen;
 
     public float OxygenPercentage => currentOxygen / maxOxygen;
-    public bool IsInOxygenZone => zoneCount > 0;
+    public bool IsInOxygenZone { get; private set; }
 
     private void Start()
     {
@@ -25,12 +24,14 @@ public class PlayerOxygen : MonoBehaviour
 
     private void Update()
     {
+        IsInOxygenZone = IsPlayerInsideAnyZone();
+
         if (IsInOxygenZone)
         {
             if (refillRate > 0f)
                 currentOxygen = Mathf.Min(maxOxygen, currentOxygen + refillRate * Time.deltaTime);
             else
-                currentOxygen = maxOxygen;   // instant refill
+                currentOxygen = maxOxygen;
         }
         else
         {
@@ -45,24 +46,24 @@ public class PlayerOxygen : MonoBehaviour
         UpdateHUD();
     }
 
+    private bool IsPlayerInsideAnyZone()
+    {
+        Vector3 playerPos = transform.position;
+        foreach (var zone in TreeOxygenArea.ActiveZones)
+        {
+            if (zone == null) continue;
+            float radius = zone.OxygenRadius;
+            if (radius <= 0f) continue;
+            float sqrDist = (playerPos - zone.transform.position).sqrMagnitude;
+            if (sqrDist <= radius * radius)
+                return true;
+        }
+        return false;
+    }
+
     private void UpdateHUD()
     {
         if (HUDManager.Instance != null)
             HUDManager.Instance.UpdateOxygen(OxygenPercentage);
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if (other.TryGetComponent<OxygenZoneMarker>(out _))
-            zoneCount++;
-    }
-
-    private void OnTriggerExit(Collider other)
-    {
-        if (other.TryGetComponent<OxygenZoneMarker>(out _))
-        {
-            zoneCount--;
-            if (zoneCount < 0) zoneCount = 0;
-        }
     }
 }

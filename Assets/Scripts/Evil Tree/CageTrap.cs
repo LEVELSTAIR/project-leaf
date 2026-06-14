@@ -60,7 +60,7 @@ public class CageTrap : MonoBehaviour
             hasCaptured = true;
 
             // Optional: disable cage collider so it doesn't capture again
-            GetComponent<Collider>().enabled = false;
+            GetComponent<Collider>().enabled = true;
 
             if (destroyOnCapture)
             {

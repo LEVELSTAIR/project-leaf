@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BlueBerrySeed
   m_EditorClassIdentifier: Assembly-CSharp::SeedData
   seedName: BlueBerry
-  seedIcon: {fileID: 0}
+  seedIcon: {fileID: 21300000, guid: 973317172cd851949944fb34fb345aab, type: 3}
   growthTime: 15
   waterRequired: 30
   harvestYield: 10

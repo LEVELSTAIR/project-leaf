@@ -174,7 +174,7 @@ public class EvilTree : MonoBehaviour
         // Disable the NavMeshAgent or movement if any (not present in this script, but safe)
         // Disable collider so player can walk through
         Collider col = GetComponent<Collider>();
-        if (col != null) col.enabled = false;
+        if (col != null) col.enabled = true;
 
         // Play capture effect
         if (capturedEffect != null)
@@ -199,6 +199,12 @@ public class EvilTree : MonoBehaviour
         }
 
         Debug.Log($"{gameObject.name} has been captured!");
+    }
+
+    // Send the captured status
+    public bool IsCaptured()
+    {
+        return isCaptured;
     }
 
     // Optional: reset capture (if needed for respawning)

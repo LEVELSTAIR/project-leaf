@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections.Generic;
 
 [RequireComponent(typeof(SphereCollider))]
 public class TreeOxygenArea : MonoBehaviour
@@ -6,30 +7,47 @@ public class TreeOxygenArea : MonoBehaviour
     [SerializeField] private SeedData seedData;
     private SphereCollider sphereCollider;
 
-    /// <summary>Get the current oxygen area radius.</summary>
-    public float GetOxygenRadius()
+    private static List<TreeOxygenArea> activeZones = new List<TreeOxygenArea>();
+    public static IReadOnlyList<TreeOxygenArea> ActiveZones => activeZones;
+
+    public float OxygenRadius
     {
-        if (seedData != null)
-            return seedData.oxygenAreaRadius;
-
-        if (sphereCollider == null)
-            sphereCollider = GetComponent<SphereCollider>();
-
-        return sphereCollider != null ? sphereCollider.radius : 0f;
+        get
+        {
+            if (seedData != null)
+                return seedData.oxygenAreaRadius;
+            if (sphereCollider == null)
+                sphereCollider = GetComponent<SphereCollider>();
+            return sphereCollider != null ? sphereCollider.radius : 0f;
+        }
     }
+
+    // Compatibility for older scripts that call GetOxygenRadius()
+    public float GetOxygenRadius() => OxygenRadius;
 
     private void Awake()
     {
         sphereCollider = GetComponent<SphereCollider>();
         sphereCollider.isTrigger = true;
         sphereCollider.enabled = false;
-
-        // Ensure the marker is present (it will be added automatically if not)
-        if (!TryGetComponent<OxygenZoneMarker>(out _))
-            gameObject.AddComponent<OxygenZoneMarker>();
     }
 
-    /// <summary>Call this when the tree reaches full maturity.</summary>
+    private void OnEnable()
+    {
+        if (!activeZones.Contains(this))
+            activeZones.Add(this);
+    }
+
+    private void OnDisable()
+    {
+        activeZones.Remove(this);
+    }
+
+    private void OnDestroy()
+    {
+        activeZones.Remove(this);
+    }
+
     public void Setup(SeedData data)
     {
         seedData = data;
@@ -37,13 +55,6 @@ public class TreeOxygenArea : MonoBehaviour
         sphereCollider.radius = seedData.oxygenAreaRadius;
     }
 
-    private void OnValidate()
-    {
-        if (seedData != null && TryGetComponent(out sphereCollider))
-            sphereCollider.radius = seedData.oxygenAreaRadius;
-    }
-
-    // ---- Gizmo ----
     private void OnDrawGizmos()
     {
         if (seedData == null || seedData.oxygenAreaRadius <= 0f) return;

@@ -307,4 +307,6 @@ public class DayNightManager : MonoBehaviour
         sunLight.intensity = targetIntensity;
         RenderSettings.ambientLight = targetAmbientColor;
     }
+
+    public float GetCurrentHour() { return currentTime; }
 }

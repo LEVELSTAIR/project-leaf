@@ -183,6 +183,9 @@ GameObject:
   - component: {fileID: 4459864850019384741}
   - component: {fileID: 4459864850019384740}
   - component: {fileID: 5662354032539919468}
+  - component: {fileID: 4740875365211282382}
+  - component: {fileID: 4046528357535566646}
+  - component: {fileID: 6603717005162388866}
   m_Layer: 0
   m_Name: FirstPersonController
   m_TagString: Player
@@ -410,6 +413,68 @@ MonoBehaviour:
   footstepVolume: 0.5
   pitchVariation: 0.8
   showDebugLogs: 0
+--- !u!114 &4740875365211282382
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4459864850019384750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25ceb12fb30125d428ad177e3f2f155d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerOxygen
+  maxOxygen: 100
+  depletionRate: 5
+  refillRate: 10
+  intermediateSound: {fileID: 8300000, guid: d54b9d25d41669a4597d11a68011ad92, type: 3}
+  lowSound: {fileID: 8300000, guid: d07ff73f4e182224193a7af29689c228, type: 3}
+  depletedSound: {fileID: 8300000, guid: 61ab06172482f1944b01413088f47ea9, type: 3}
+  intermediateThreshold: 0.8
+  lowThreshold: 0.4
+  onOxygenDepleted:
+    m_PersistentCalls:
+      m_Calls: []
+  onDepletedStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!114 &4046528357535566646
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4459864850019384750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a82c7f7750cc7794388449501e51e25b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerHealthManager
+  maxHealth: 100
+  currentHealth: 0
+  autoHealDelay: 5
+  healAmountPerSecond: 10
+  healTickInterval: 0.5
+  invincibilityDuration: 1
+  playerGender: 0
+  maleHurtSound: {fileID: 8300000, guid: 90c09ba30009aed4288ae2a304de30ed, type: 3}
+  femaleHurtSound: {fileID: 8300000, guid: 902af4c5e6939244b94860ded6e57ca6, type: 3}
+--- !u!114 &6603717005162388866
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4459864850019384750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0c05cafe81970d24c806a6c55ddd54c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::OxygenDamageHandler
+  damagePerSecond: 5
+  damageTickInterval: 1
+  startupDelay: 0
 --- !u!1 &4459864850190357393
 GameObject:
   m_ObjectHideFlags: 0

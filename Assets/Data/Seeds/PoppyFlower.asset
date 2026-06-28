@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: PoppyFlower
   m_EditorClassIdentifier: Assembly-CSharp::FlowerSeedData
   seedName: PoppyFlower
-  seedIcon: {fileID: 0}
+  seedIcon: {fileID: 21300000, guid: 5e86cf1d9569918438719572a8229898, type: 3}
   flowerPrefab: {fileID: 4688968962370557476, guid: 725e9bf892ed4c740aa17b27b145861c, type: 3}

@@ -32,7 +32,6 @@ public class TreeCuttable : MonoBehaviour
 
     private bool isCutDown = false;
     private bool isChopping = false;
-    private AudioSource audioSource;
     private Collider treeCollider;
     private GameObject treeVisual;
     private GameObject currentStump;
@@ -41,9 +40,7 @@ public class TreeCuttable : MonoBehaviour
     {
         currentHits = hitsToCut;
         treeCollider = GetComponent<Collider>();
-        audioSource = GetComponent<AudioSource>();
-        if (audioSource == null && cutSound != null)
-            audioSource = gameObject.AddComponent<AudioSource>();
+        // No local AudioSource – we use SoundManager instead
 
         var renderer = GetComponentInChildren<Renderer>();
         treeVisual = renderer != null ? renderer.gameObject : gameObject;
@@ -145,8 +142,15 @@ public class TreeCuttable : MonoBehaviour
     private void PlayCutEffects()
     {
         if (cutEffect != null) cutEffect.Play();
-        if (cutSound != null && audioSource != null)
-            audioSource.PlayOneShot(cutSound);
+
+        // Use SoundManager instead of a local AudioSource
+        if (cutSound != null)
+        {
+            if (SoundManager.Instance != null)
+                SoundManager.Instance.PlaySFXOneShot(cutSound, 1f);
+            else
+                Debug.LogWarning("SoundManager.Instance not found – cannot play cut sound.");
+        }
     }
 
     private IEnumerator ShakeTree()

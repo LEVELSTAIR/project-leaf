@@ -8,6 +8,7 @@ public class WeaponHolderController : MonoBehaviour
     public GameObject wateringCan;
     public GameObject axe;
     public GameObject torch;
+    public GameObject pickAxe;
 
     [Header("Hotbar Mapping")]
     [Tooltip("Hotbar slot index (1-based) that equips the watering can.")]
@@ -16,6 +17,8 @@ public class WeaponHolderController : MonoBehaviour
     public int axeSlot = 2;
     [Tooltip("Hotbar slot index (1-based) that equips the torch.")]
     public int torchSlot = 3;
+    [Tooltip("Hotbar slot index (1-based) that equips the pickaxe.")]
+    public int pickAxeSlot = 4;
 
     [Header("Current State")]
     [SerializeField] private string currentTool = "WateringCan"; // "WateringCan" or "Axe" or "Torch"
@@ -60,6 +63,8 @@ public class WeaponHolderController : MonoBehaviour
             EquipTool("Axe");
         else if (slot == torchSlot)
             EquipTool("Torch");
+        else if (slot == pickAxeSlot)
+            EquipTool("Pickaxe");
         // Other slots could keep the last tool, or do nothing
     }
 
@@ -71,6 +76,8 @@ public class WeaponHolderController : MonoBehaviour
         if (wateringCan != null) wateringCan.SetActive(toolName == "WateringCan");
         if (axe != null) axe.SetActive(toolName == "Axe");
         if (torch != null) torch.SetActive(toolName == "Torch");
+        if (toolName != null) pickAxe.SetActive(toolName == "Pickaxe");
+
 
         Debug.Log($"[WeaponHolder] Equipped: {toolName}");
     }

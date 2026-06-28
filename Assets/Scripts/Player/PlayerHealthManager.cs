@@ -3,43 +3,49 @@ using System.Collections;
 
 public class PlayerHealthManager : MonoBehaviour
 {
+    // ---------- Gender selection ----------
+    public enum Gender { Male, Female }
+
     [Header("Health Settings")]
     [SerializeField] private int maxHealth = 100;
     [SerializeField] private int currentHealth;
 
     [Header("Auto Healing")]
-    [SerializeField] private float autoHealDelay = 5f;      // seconds after last damage before healing starts
+    [SerializeField] private float autoHealDelay = 5f;
     [SerializeField] private float healAmountPerSecond = 10f;
-    [SerializeField] private float healTickInterval = 0.5f; // how often to apply healing
+    [SerializeField] private float healTickInterval = 0.5f;
 
     [Header("Invincibility Frames (optional)")]
-    [SerializeField] private float invincibilityDuration = 1f; // after being hit, cannot take damage again for this long
+    [SerializeField] private float invincibilityDuration = 1f;
     private float invincibilityTimer = 0f;
+
+    [Header("Hurt Sounds")]
+    [SerializeField] private Gender playerGender = Gender.Male;
+    [SerializeField] private AudioClip maleHurtSound;
+    [SerializeField] private AudioClip femaleHurtSound;
 
     // Cached references
     private HUDManager hud;
     private Coroutine autoHealCoroutine;
 
-    // Events (optional, for other systems to react)
-    public System.Action<int, int> OnHealthChanged; // current, max
+    // Events
+    public System.Action<int, int> OnHealthChanged;
     public System.Action OnPlayerDied;
 
     private void Start()
     {
         currentHealth = maxHealth;
 
-        // Find HUDManager via singleton
         if (HUDManager.Instance != null)
             hud = HUDManager.Instance;
         else
-            Debug.LogWarning("PlayerHealthManager: HUDManager.Instance not found. HUD won't update.");
+            Debug.LogWarning("PlayerHealthManager: HUDManager.Instance not found.");
 
         UpdateHUD();
     }
 
     private void Update()
     {
-        // Reduce invincibility timer
         if (invincibilityTimer > 0f)
             invincibilityTimer -= Time.deltaTime;
     }
@@ -47,13 +53,10 @@ public class PlayerHealthManager : MonoBehaviour
     /// <summary>
     /// Called when the player takes damage.
     /// </summary>
-    /// <param name="damage">Amount of damage</param>
     public void TakeDamage(int damage)
     {
-        // If invincible, ignore damage
         if (invincibilityTimer > 0f) return;
 
-        // Apply damage
         currentHealth -= damage;
         if (currentHealth < 0) currentHealth = 0;
 
@@ -61,22 +64,21 @@ public class PlayerHealthManager : MonoBehaviour
         if (invincibilityDuration > 0f)
             invincibilityTimer = invincibilityDuration;
 
-        // Flash the HUD
+        // ---- Play hurt sound ----
+        PlayHurtSound();
+
+        // Flash HUD
         if (HUDManager.Instance != null)
             HUDManager.Instance.ShowDamageFlash();
 
-        // Update HUD
         UpdateHUD();
-
-        // Notify listeners
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
 
-        // Stop current auto-heal coroutine and restart the delay
+        // Restart auto-heal delay
         if (autoHealCoroutine != null)
             StopCoroutine(autoHealCoroutine);
         autoHealCoroutine = StartCoroutine(AutoHealRoutine());
 
-        // If health reaches zero, die
         if (currentHealth <= 0)
             Die();
     }
@@ -86,7 +88,7 @@ public class PlayerHealthManager : MonoBehaviour
     /// </summary>
     public void Heal(int amount)
     {
-        if (currentHealth <= 0) return; // dead players cannot heal
+        if (currentHealth <= 0) return;
 
         currentHealth += amount;
         if (currentHealth > maxHealth) currentHealth = maxHealth;
@@ -95,9 +97,6 @@ public class PlayerHealthManager : MonoBehaviour
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
-    /// <summary>
-    /// Fully heal the player.
-    /// </summary>
     public void FullHeal()
     {
         currentHealth = maxHealth;
@@ -105,18 +104,13 @@ public class PlayerHealthManager : MonoBehaviour
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
     }
 
-    /// <summary>
-    /// Returns current health as a percentage (0-1).
-    /// </summary>
-    public float GetHealthPercentage()
-    {
-        return (float)currentHealth / maxHealth;
-    }
+    public float GetHealthPercentage() => (float)currentHealth / maxHealth;
+    public bool IsAlive() => currentHealth > 0;
 
     /// <summary>
-    /// Check if player is alive.
+    /// Change the player's gender at runtime.
     /// </summary>
-    public bool IsAlive() => currentHealth > 0;
+    public void SetGender(Gender newGender) => playerGender = newGender;
 
     private void UpdateHUD()
     {
@@ -126,10 +120,8 @@ public class PlayerHealthManager : MonoBehaviour
 
     private IEnumerator AutoHealRoutine()
     {
-        // Wait for the delay after last hit
         yield return new WaitForSeconds(autoHealDelay);
 
-        // Then heal over time until full health
         while (currentHealth < maxHealth && currentHealth > 0)
         {
             float healThisTick = healAmountPerSecond * healTickInterval;
@@ -150,21 +142,30 @@ public class PlayerHealthManager : MonoBehaviour
         Debug.Log("Player died!");
         OnPlayerDied?.Invoke();
 
-        // Optional: disable player controls, show death UI, respawn, etc.
-        // For now, we can stop auto-healing and maybe reload scene.
         if (autoHealCoroutine != null)
             StopCoroutine(autoHealCoroutine);
 
-        // Example: trigger a game over event
+        // Optionally trigger game over
         // GameManager.Instance.GameOver();
     }
 
-    // Optional: reset health when respawning
     public void Respawn()
     {
         currentHealth = maxHealth;
         invincibilityTimer = 0f;
         UpdateHUD();
         OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
+
+    // ---------- Sound helpers ----------
+    private void PlayHurtSound()
+    {
+        AudioClip clip = (playerGender == Gender.Male) ? maleHurtSound : femaleHurtSound;
+        if (clip == null) return;
+
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySFXOneShot(clip);
+        else
+            Debug.LogWarning("SoundManager.Instance not found – hurt sound not played.");
     }
 }

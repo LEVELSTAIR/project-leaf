@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class DayNightManager : MonoBehaviour
 {
@@ -16,10 +17,10 @@ public class DayNightManager : MonoBehaviour
     public Transform sunPivot; // Usually an empty GameObject
 
     [Header("Lighting Colors")]
-    public Color dayLightColor = new Color(1f, 0.95f, 0.85f);      // Warm white
-    public Color sunriseLightColor = new Color(1f, 0.6f, 0.4f);    // Orange/pink
-    public Color sunsetLightColor = new Color(1f, 0.5f, 0.3f);     // Deep orange
-    public Color nightLightColor = new Color(0.2f, 0.2f, 0.4f);    // Cool blue
+    public Color dayLightColor = new Color(1f, 0.95f, 0.85f);
+    public Color sunriseLightColor = new Color(1f, 0.6f, 0.4f);
+    public Color sunsetLightColor = new Color(1f, 0.5f, 0.3f);
+    public Color nightLightColor = new Color(0.2f, 0.2f, 0.4f);
 
     [Header("Lighting Intensity")]
     public float dayIntensity = 1.2f;
@@ -34,18 +35,12 @@ public class DayNightManager : MonoBehaviour
     public Material sunsetSkybox;
 
     [Header("Day/Night Thresholds")]
-    [Tooltip("Sunrise begins at this hour")]
-    public float sunriseStartHour = 5f;    // 5:00 AM
-    [Tooltip("Sunrise ends / Day fully begins")]
-    public float sunriseEndHour = 6f;      // 6:00 AM
-    [Tooltip("Full day period")]
-    public float dayStartHour = 6f;        // 6:00 AM
-    [Tooltip("Sunset begins at this hour")]
-    public float sunsetStartHour = 17f;    // 5:00 PM
-    [Tooltip("Sunset ends / Night fully begins")]
-    public float sunsetEndHour = 18f;      // 6:00 PM
-    [Tooltip("Night period begins")]
-    public float nightStartHour = 18f;     // 6:00 PM
+    public float sunriseStartHour = 5f;
+    public float sunriseEndHour = 6f;
+    public float dayStartHour = 6f;
+    public float sunsetStartHour = 17f;
+    public float sunsetEndHour = 18f;
+    public float nightStartHour = 18f;
 
     [Header("Ambient Light")]
     public Color dayAmbientColor = new Color(0.5f, 0.5f, 0.5f);
@@ -54,8 +49,17 @@ public class DayNightManager : MonoBehaviour
     public Color sunsetAmbientColor = new Color(0.3f, 0.15f, 0.1f);
 
     [Header("Transition Settings")]
-    [Tooltip("How smoothly the light color and intensity blend")]
     public float transitionSmoothness = 2f;
+
+    // ========== NEW MUSIC SETTINGS ==========
+    [Header("Music")]
+    public AudioClip dayMusic;
+    public AudioClip nightMusic;
+    public AudioClip sunriseMusic;
+    public AudioClip sunsetMusic;
+    [Tooltip("Duration (seconds) to crossfade between music tracks. Set to 0 for instant switch.")]
+    public float musicCrossfadeDuration = 3f;
+    public float musicVolume = 0.7f;
 
     [Header("Debug")]
     public bool isDay;
@@ -66,6 +70,10 @@ public class DayNightManager : MonoBehaviour
     private Color targetLightColor;
     private float targetIntensity;
     private Color targetAmbientColor;
+
+    // ========== NEW MUSIC VARIABLES ==========
+    private string currentMusicPeriod = ""; // Tracks last played period to avoid redundant switches
+    private Coroutine musicFadeCoroutine;
 
     private void Awake()
     {
@@ -86,16 +94,15 @@ public class DayNightManager : MonoBehaviour
             return;
         }
 
-        // 24 in-game hours per full real-time day
         timeScale = 24f / (dayLengthInMinutes * 60f);
-        
-        // Initialize targets
+
         UpdateLightingTargets();
-        
-        // Apply initial lighting immediately
         sunLight.color = targetLightColor;
         sunLight.intensity = targetIntensity;
         RenderSettings.ambientLight = targetAmbientColor;
+
+        // Set initial music
+        UpdateMusic();
     }
 
     void Update()
@@ -107,6 +114,9 @@ public class DayNightManager : MonoBehaviour
         UpdateSkybox();
         UpdateDayNightState();
         UpdateHUDClock();
+
+        // ========== CHECK FOR MUSIC CHANGE ==========
+        UpdateMusic();
     }
 
     void AdvanceTime()
@@ -123,7 +133,6 @@ public class DayNightManager : MonoBehaviour
             ProjectLeaf.Garden.PlantManager.Instance.AdvanceGrowth(deltaGameHours);
         }
 
-        // Format time for UI (HH:mm)
         int hours = Mathf.FloorToInt(currentTime);
         int minutes = Mathf.FloorToInt((currentTime - hours) * 60);
         formattedTime = string.Format("{0:00}:{1:00}", hours, minutes);
@@ -131,10 +140,6 @@ public class DayNightManager : MonoBehaviour
 
     void UpdateSunRotation()
     {
-        // Map 0–24 hours → 0–360 degrees
-        // At 6 AM (sunrise), sun should be at horizon (0°)
-        // At 12 PM (noon), sun should be at zenith (90°)
-        // At 6 PM (sunset), sun should be at horizon (180°)
         float sunAngle = ((currentTime - 6f) / 24f) * 360f;
 
         if (sunPivot)
@@ -145,9 +150,6 @@ public class DayNightManager : MonoBehaviour
 
     void UpdateLightingTargets()
     {
-        // Determine what period we're in and set target colors/intensity
-        
-        // NIGHT (6 PM to 5 AM)
         if (currentTime >= nightStartHour || currentTime < sunriseStartHour)
         {
             currentPeriod = "Night";
@@ -155,30 +157,25 @@ public class DayNightManager : MonoBehaviour
             targetIntensity = nightIntensity;
             targetAmbientColor = nightAmbientColor;
         }
-        // SUNRISE TRANSITION (5 AM to 6 AM)
         else if (currentTime >= sunriseStartHour && currentTime < sunriseEndHour)
         {
             currentPeriod = "Sunrise";
             float t = (currentTime - sunriseStartHour) / (sunriseEndHour - sunriseStartHour);
-            
-            // First half: night to sunrise peak
-            // Second half: sunrise peak to day
             if (t < 0.5f)
             {
-                float subT = t * 2f; // 0 to 1 for first half
+                float subT = t * 2f;
                 targetLightColor = Color.Lerp(nightLightColor, sunriseLightColor, subT);
                 targetIntensity = Mathf.Lerp(nightIntensity, sunriseIntensity, subT);
                 targetAmbientColor = Color.Lerp(nightAmbientColor, sunriseAmbientColor, subT);
             }
             else
             {
-                float subT = (t - 0.5f) * 2f; // 0 to 1 for second half
+                float subT = (t - 0.5f) * 2f;
                 targetLightColor = Color.Lerp(sunriseLightColor, dayLightColor, subT);
                 targetIntensity = Mathf.Lerp(sunriseIntensity, dayIntensity, subT);
                 targetAmbientColor = Color.Lerp(sunriseAmbientColor, dayAmbientColor, subT);
             }
         }
-        // DAY (6 AM to 5 PM)
         else if (currentTime >= dayStartHour && currentTime < sunsetStartHour)
         {
             currentPeriod = "Day";
@@ -186,24 +183,20 @@ public class DayNightManager : MonoBehaviour
             targetIntensity = dayIntensity;
             targetAmbientColor = dayAmbientColor;
         }
-        // SUNSET TRANSITION (5 PM to 6 PM)
         else if (currentTime >= sunsetStartHour && currentTime < sunsetEndHour)
         {
             currentPeriod = "Sunset";
             float t = (currentTime - sunsetStartHour) / (sunsetEndHour - sunsetStartHour);
-            
-            // First half: day to sunset peak
-            // Second half: sunset peak to night
             if (t < 0.5f)
             {
-                float subT = t * 2f; // 0 to 1 for first half
+                float subT = t * 2f;
                 targetLightColor = Color.Lerp(dayLightColor, sunsetLightColor, subT);
                 targetIntensity = Mathf.Lerp(dayIntensity, sunsetIntensity, subT);
                 targetAmbientColor = Color.Lerp(dayAmbientColor, sunsetAmbientColor, subT);
             }
             else
             {
-                float subT = (t - 0.5f) * 2f; // 0 to 1 for second half
+                float subT = (t - 0.5f) * 2f;
                 targetLightColor = Color.Lerp(sunsetLightColor, nightLightColor, subT);
                 targetIntensity = Mathf.Lerp(sunsetIntensity, nightIntensity, subT);
                 targetAmbientColor = Color.Lerp(sunsetAmbientColor, nightAmbientColor, subT);
@@ -213,13 +206,12 @@ public class DayNightManager : MonoBehaviour
 
     void ApplyLightingSmooth()
     {
-        // Smoothly interpolate current values toward target
         float smoothTime = transitionSmoothness * Time.deltaTime;
-        
+
         sunLight.color = Color.Lerp(sunLight.color, targetLightColor, smoothTime);
         sunLight.intensity = Mathf.Lerp(sunLight.intensity, targetIntensity, smoothTime);
         sunLight.shadowStrength = Mathf.Clamp01(sunLight.intensity);
-        
+
         RenderSettings.ambientLight = Color.Lerp(RenderSettings.ambientLight, targetAmbientColor, smoothTime);
     }
 
@@ -227,28 +219,19 @@ public class DayNightManager : MonoBehaviour
     {
         Material targetSkybox = nightSkybox;
 
-        // Determine target skybox based on period
         if (currentTime >= nightStartHour || currentTime < sunriseStartHour)
-        {
             targetSkybox = nightSkybox;
-        }
         else if (currentTime >= sunriseStartHour && currentTime < sunriseEndHour)
-        {
             targetSkybox = sunriseSkybox ? sunriseSkybox : daySkybox;
-        }
         else if (currentTime >= dayStartHour && currentTime < sunsetStartHour)
-        {
             targetSkybox = daySkybox;
-        }
         else if (currentTime >= sunsetStartHour && currentTime < sunsetEndHour)
-        {
             targetSkybox = sunsetSkybox ? sunsetSkybox : nightSkybox;
-        }
 
         if (RenderSettings.skybox != targetSkybox && targetSkybox != null)
         {
             RenderSettings.skybox = targetSkybox;
-            DynamicGI.UpdateEnvironment(); // Update lighting reflections
+            DynamicGI.UpdateEnvironment();
         }
     }
 
@@ -259,27 +242,51 @@ public class DayNightManager : MonoBehaviour
 
     void UpdateHUDClock()
     {
-        // Update HUD clock if HUDManager exists
         if (HUDManager.Instance != null)
-        {
             HUDManager.Instance.UpdateTime(formattedTime);
-        }
     }
 
-    public string GetFormattedTime()
-    {
-        return formattedTime;
-    }
-
-    public string GetCurrentPeriod()
-    {
-        return currentPeriod;
-    }
+    // ===================== NEW MUSIC LOGIC =====================
 
     /// <summary>
-    /// Returns a normalized value (0-1) representing how much daylight there is.
-    /// 0 = full night, 1 = full day
+    /// Checks if the time period has changed and updates the background music accordingly.
     /// </summary>
+    private void UpdateMusic()
+    {
+        if (SoundManager.Instance == null) return;
+
+        string newPeriod = currentPeriod;
+        if (newPeriod == currentMusicPeriod) return;
+        currentMusicPeriod = newPeriod;
+
+        AudioClip clipToPlay = null;
+
+        switch (newPeriod)
+        {
+            case "Day": clipToPlay = dayMusic; break;
+            case "Night": clipToPlay = nightMusic; break;
+            case "Sunrise": clipToPlay = sunriseMusic != null ? sunriseMusic : dayMusic; break;
+            case "Sunset": clipToPlay = sunsetMusic != null ? sunsetMusic : nightMusic; break;
+            default: return;
+        }
+
+        if (clipToPlay == null)
+        {
+            Debug.LogWarning($"DayNightManager: No music assigned for '{newPeriod}'.");
+            return;
+        }
+
+        // Use SoundManager's crossfade method
+        SoundManager.Instance.CrossfadeMusic(clipToPlay, musicVolume, musicCrossfadeDuration);
+
+        Debug.Log($"DayNightManager: Changed music to '{clipToPlay.name}' for '{newPeriod}'.");
+    }
+
+    // ===================== END MUSIC LOGIC =====================
+
+    public string GetFormattedTime() => formattedTime;
+    public string GetCurrentPeriod() => currentPeriod;
+
     public float GetDaylightAmount()
     {
         if (currentTime >= nightStartHour || currentTime < sunriseStartHour)
@@ -290,23 +297,21 @@ public class DayNightManager : MonoBehaviour
             return (currentTime - sunriseStartHour) / (sunriseEndHour - sunriseStartHour);
         else if (currentTime >= sunsetStartHour && currentTime < sunsetEndHour)
             return 1f - ((currentTime - sunsetStartHour) / (sunsetEndHour - sunsetStartHour));
-        
+
         return 0.5f;
     }
 
-    /// <summary>
-    /// Sets the time directly (useful for debugging or time-skip features)
-    /// </summary>
     public void SetTime(float hour)
     {
         currentTime = Mathf.Clamp(hour, 0f, 24f);
         UpdateLightingTargets();
-        
-        // Apply immediately when time is set manually
         sunLight.color = targetLightColor;
         sunLight.intensity = targetIntensity;
         RenderSettings.ambientLight = targetAmbientColor;
+        // Force music update immediately after time change
+        currentMusicPeriod = ""; // reset to force update
+        UpdateMusic();
     }
 
-    public float GetCurrentHour() { return currentTime; }
+    public float GetCurrentHour() => currentTime;
 }

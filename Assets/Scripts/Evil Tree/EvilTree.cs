@@ -5,14 +5,16 @@ public class EvilTree : MonoBehaviour
     [Header("Combat Settings")]
     [SerializeField] private int maxHealth = 50;
     [SerializeField] private int attackDamage = 15;
-    [SerializeField] private float attackRange = 3f;
     [SerializeField] private float detectionRange = 8f;
-    [SerializeField] private float attackCooldown = 1.5f;
+    [SerializeField] private float attackRange = 3f;
 
     [Header("Field of View")]
-    [SerializeField] private float fovAngle = 90f;           // degrees (total angle)
-    [SerializeField] private bool enableLineOfSight = true;  // check for obstacles
-    [SerializeField] private LayerMask obstacleMask;         // what blocks sight
+    [SerializeField] private float fovAngle = 90f;
+    [SerializeField] private bool enableLineOfSight = true;
+    [SerializeField] private LayerMask obstacleMask;
+
+    [Header("Hand Colliders (solid, not triggers)")]
+    [SerializeField] private Collider[] handColliders;
 
     [Header("References")]
     [SerializeField] private Transform player;
@@ -20,13 +22,22 @@ public class EvilTree : MonoBehaviour
     [SerializeField] private GameObject attackEffect;
 
     [Header("Capture")]
-    [SerializeField] private GameObject capturedEffect;      // optional particle when captured
-    [SerializeField] private Color capturedColor = Color.gray; // optional material tint
+    [SerializeField] private GameObject capturedEffect;
+    [SerializeField] private Color capturedColor = Color.gray;
+
+    [Header("Sound Effects")]
+    [SerializeField] private AudioClip detectionSound;   // played when first detecting the player
+    [SerializeField] private AudioClip attackSound;      // played when starting an attack
 
     private int currentHealth;
-    private float attackTimer = 0f;
-    private bool isPlayerInRange = false;
+    private bool isPlayerDetected = false;
+    private bool isAttacking = false;
     private bool isCaptured = false;
+    private bool wasAttacking = false;
+    private bool hasHitThisSwing = false;    // prevents multiple hits per swing
+
+    private bool wasDetectedPreviously = false; // to trigger detection sound only once
+
     private Renderer treeRenderer;
     private Material originalMaterial;
     private Color originalColor;
@@ -35,6 +46,33 @@ public class EvilTree : MonoBehaviour
     {
         currentHealth = maxHealth;
 
+        // Ensure Rigidbody on root (kinematic)
+        Rigidbody rb = GetComponent<Rigidbody>();
+        if (rb == null)
+        {
+            rb = gameObject.AddComponent<Rigidbody>();
+            rb.isKinematic = true;
+            Debug.Log("EvilTree: Added Kinematic Rigidbody to root.");
+        }
+        else
+        {
+            rb.isKinematic = true;
+        }
+
+        // Set hand colliders to solid, not triggers, and match root layer
+        int rootLayer = gameObject.layer;
+        foreach (Collider col in handColliders)
+        {
+            if (col != null)
+            {
+                col.gameObject.layer = rootLayer;
+                col.isTrigger = false;
+                col.enabled = true;
+                Debug.Log($"Hand collider {col.name} set to layer {LayerMask.LayerToName(rootLayer)}, solid and enabled.");
+            }
+        }
+
+        // Find player if not assigned
         if (player == null)
         {
             GameObject p = GameObject.FindGameObjectWithTag("Player");
@@ -42,103 +80,176 @@ public class EvilTree : MonoBehaviour
             else Debug.LogWarning("EvilTree: No player found!");
         }
 
+        // Ensure player has a non-kinematic Rigidbody
+        if (player != null)
+        {
+            Rigidbody playerRb = player.GetComponent<Rigidbody>();
+            if (playerRb == null)
+            {
+                Debug.LogWarning("EvilTree: Player has no Rigidbody! Adding one (non-kinematic).");
+                playerRb = player.gameObject.AddComponent<Rigidbody>();
+                playerRb.isKinematic = false;
+            }
+            else if (playerRb.isKinematic)
+            {
+                Debug.LogWarning("EvilTree: Player rigidbody is kinematic. Setting to non-kinematic for collision detection.");
+                playerRb.isKinematic = false;
+            }
+
+            // Check layer collision
+            int playerLayer = player.gameObject.layer;
+            bool canCollide = !Physics.GetIgnoreLayerCollision(rootLayer, playerLayer);
+            Debug.Log($"EvilTree: Layers can collide: {LayerMask.LayerToName(rootLayer)} + {LayerMask.LayerToName(playerLayer)} = {canCollide}");
+        }
+
         if (animator == null) animator = GetComponent<Animator>();
 
-        // Cache renderer for visual effects
         treeRenderer = GetComponent<Renderer>();
         if (treeRenderer != null)
         {
             originalMaterial = treeRenderer.material;
             originalColor = originalMaterial.color;
         }
+
+        wasDetectedPreviously = false;
     }
 
     private void Update()
     {
-        // If captured, do nothing (tree is neutralised)
         if (isCaptured) return;
-
         if (player == null) return;
 
-        // Update cooldown
-        if (attackTimer > 0f)
-            attackTimer -= Time.deltaTime;
-
-        // Check if player is in detection range
         float distance = Vector3.Distance(transform.position, player.position);
-        bool playerDetected = false;
 
+        // ---- Detection ----
+        isPlayerDetected = false;
         if (distance <= detectionRange)
         {
-            // Check FOV angle
             Vector3 dirToPlayer = (player.position - transform.position).normalized;
             float angleToPlayer = Vector3.Angle(transform.forward, dirToPlayer);
 
             if (angleToPlayer <= fovAngle * 0.5f)
             {
-                // Optional line-of-sight check
                 if (enableLineOfSight)
                 {
-                    Vector3 origin = transform.position + Vector3.up * 1f; // eye height
+                    Vector3 origin = transform.position + Vector3.up * 1f;
                     Vector3 target = player.position + Vector3.up * 1f;
                     RaycastHit hit;
                     if (Physics.Linecast(origin, target, out hit, obstacleMask))
                     {
                         if (hit.transform == player)
-                            playerDetected = true;
+                            isPlayerDetected = true;
                     }
                 }
                 else
                 {
-                    playerDetected = true;
+                    isPlayerDetected = true;
                 }
             }
         }
 
-        // Check attack range (no FOV needed for attack, tree can attack if player is close enough)
-        isPlayerInRange = distance <= attackRange;
-
-        // Update animator (optional)
-        if (animator != null)
+        // ---- Play detection sound when first detected ----
+        if (isPlayerDetected && !wasDetectedPreviously)
         {
-            animator.SetBool("PlayerDetected", playerDetected);
-            animator.SetBool("IsAttacking", isPlayerInRange && attackTimer <= 0f);
+            PlaySound(detectionSound);
+            wasDetectedPreviously = true;
+        }
+        else if (!isPlayerDetected)
+        {
+            wasDetectedPreviously = false; // reset so we can play again later
         }
 
-        // Attack if in range and cooldown ready
-        if (isPlayerInRange && attackTimer <= 0f)
+        // ---- Attack state ----
+        bool inAttackRange = distance <= attackRange;
+        isAttacking = isPlayerDetected && inAttackRange;
+
+        // Reset hit flag when attack starts
+        if (isAttacking && !wasAttacking)
         {
-            Attack();
+            hasHitThisSwing = false;
+            if (animator != null)
+                animator.SetTrigger("Attack");
+
+            // ---- Play attack sound ----
+            PlaySound(attackSound);
+
+            if (attackEffect != null)
+            {
+                GameObject effect = Instantiate(attackEffect, transform.position, Quaternion.identity);
+                Destroy(effect, 1f);
+            }
+            Debug.Log("EvilTree: Attack triggered!");
+        }
+
+        // Update animator
+        if (animator != null)
+        {
+            animator.SetBool("PlayerDetected", isPlayerDetected);
+            animator.SetBool("IsAttacking", isAttacking);
+        }
+
+        wasAttacking = isAttacking;
+
+        // ---- MANUAL OVERLAP CHECK (FALLBACK) ----
+        if (isAttacking && !hasHitThisSwing)
+        {
+            CheckManualOverlap();
         }
     }
 
-    private void Attack()
+    private void CheckManualOverlap()
     {
-        attackTimer = attackCooldown;
+        if (player == null) return;
 
-        if (animator != null)
-            animator.SetTrigger("Attack");
+        Collider playerCollider = player.GetComponent<Collider>();
+        if (playerCollider == null) return;
 
-        if (attackEffect != null)
+        foreach (Collider hand in handColliders)
         {
-            GameObject effect = Instantiate(attackEffect, transform.position, Quaternion.identity);
-            Destroy(effect, 1f);
-        }
+            if (hand == null) continue;
 
-        if (player != null)
-        {
-            PlayerHealthManager playerHealth = player.GetComponent<PlayerHealthManager>();
-            if (playerHealth != null)
-                playerHealth.TakeDamage(attackDamage);
-            else
-                Debug.LogWarning("EvilTree: Player has no Health component!");
+            // Use bounds intersection (fast but approximate)
+            if (hand.bounds.Intersects(playerCollider.bounds))
+            {
+                Debug.Log($"MANUAL OVERLAP DETECTED: {hand.name} intersects player!");
+                ApplyDamageToPlayer();
+                hasHitThisSwing = true; // prevent multiple hits per swing
+                break;
+            }
         }
+    }
+
+    private void ApplyDamageToPlayer()
+    {
+        if (isCaptured) return;
+
+        PlayerHealthManager playerHealth = player.GetComponent<PlayerHealthManager>();
+        if (playerHealth != null)
+        {
+            playerHealth.TakeDamage(attackDamage);
+            Debug.Log($"{gameObject.name} punched player for {attackDamage} damage (manual overlap)!");
+        }
+        else
+        {
+            Debug.LogWarning("EvilTree: Player has no PlayerHealthManager!");
+        }
+    }
+
+    // Called by HandColliderForwarder (keep for future use)
+    public void OnHandCollisionEnter(Collision collision)
+    {
+        // This is kept but will likely not be called if physics fails.
+        Debug.Log($"EvilTree.OnHandCollisionEnter: collision with {collision.gameObject.name}");
+        if (isCaptured) return;
+        if (!isAttacking) return;
+        if (collision.transform != player) return;
+
+        ApplyDamageToPlayer();
     }
 
     public void TakeDamage(int damage)
     {
-        if (isCaptured) return; // captured trees cannot be damaged (or you can allow, up to you)
-
+        if (isCaptured) return;
         currentHealth -= damage;
         if (currentHealth <= 0)
             Die();
@@ -160,38 +271,22 @@ public class EvilTree : MonoBehaviour
         Destroy(gameObject, 1f);
     }
 
-    /// <summary>
-    /// Called by CageTrap to neutralise the tree.
-    /// </summary>
     public void Capture()
     {
         if (isCaptured) return;
         isCaptured = true;
+        isAttacking = false;
+        isPlayerDetected = false;
 
-        // Stop any ongoing attack
-        attackTimer = 0f;
+        Collider mainCol = GetComponent<Collider>();
+        if (mainCol != null) mainCol.enabled = true;
 
-        // Disable the NavMeshAgent or movement if any (not present in this script, but safe)
-        // Disable collider so player can walk through
-        Collider col = GetComponent<Collider>();
-        if (col != null) col.enabled = true;
-
-        // Play capture effect
         if (capturedEffect != null)
-        {
             Instantiate(capturedEffect, transform.position, Quaternion.identity);
-        }
 
-        // Change visual appearance (material tint)
         if (treeRenderer != null)
-        {
             treeRenderer.material.color = capturedColor;
-        }
 
-        // Optional: play a sound
-        // AudioSource.PlayClipAtPoint(captureSound, transform.position);
-
-        // Optional: trigger an animator state
         if (animator != null)
         {
             animator.SetTrigger("Captured");
@@ -201,44 +296,39 @@ public class EvilTree : MonoBehaviour
         Debug.Log($"{gameObject.name} has been captured!");
     }
 
-    // Send the captured status
-    public bool IsCaptured()
-    {
-        return isCaptured;
-    }
+    public bool IsCaptured() => isCaptured;
 
-    // Optional: reset capture (if needed for respawning)
     public void Uncapture()
     {
         if (!isCaptured) return;
         isCaptured = false;
 
-        Collider col = GetComponent<Collider>();
-        if (col != null) col.enabled = true;
+        Collider mainCol = GetComponent<Collider>();
+        if (mainCol != null) mainCol.enabled = true;
 
         if (treeRenderer != null)
-        {
             treeRenderer.material.color = originalColor;
-        }
 
         if (animator != null)
-        {
             animator.SetBool("IsCaptured", false);
-        }
     }
 
-    // Visualize ranges and FOV in editor
+    // ---------- Sound Helper ----------
+    private void PlaySound(AudioClip clip)
+    {
+        if (clip == null) return;
+        if (SoundManager.Instance != null)
+            SoundManager.Instance.PlaySFXOneShot(clip);
+        else
+            Debug.LogWarning("SoundManager.Instance not found – sound not played.");
+    }
+
     private void OnDrawGizmosSelected()
     {
-        // Detection range
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, detectionRange);
-
-        // Attack range
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position, attackRange);
-
-        // FOV cone (if we have a forward direction)
         Gizmos.color = Color.cyan;
         Vector3 forward = transform.forward;
         float halfFOV = fovAngle * 0.5f;

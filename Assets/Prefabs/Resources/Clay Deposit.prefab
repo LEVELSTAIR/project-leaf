@@ -14,6 +14,8 @@ GameObject:
   - component: {fileID: 1121518867935084609}
   - component: {fileID: 6190985508927378803}
   - component: {fileID: 2165293300253093252}
+  - component: {fileID: 3906961687886719931}
+  - component: {fileID: 4945575601535125686}
   m_Layer: 8
   m_Name: Clay Deposit
   m_TagString: ClayDeposit
@@ -35,7 +37,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 8612041363618442487}
-  - {fileID: 8649719269069704579}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!65 &2778977798579301145
@@ -177,54 +178,48 @@ CapsuleCollider:
   m_Height: 9.007402
   m_Direction: 1
   m_Center: {x: 4.924576, y: -2.8311987, z: 8.210976}
---- !u!1 &4052517462454521148
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 8649719269069704579}
-  - component: {fileID: 8433136368374082992}
-  m_Layer: 8
-  m_Name: Scripts
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &8649719269069704579
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4052517462454521148}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 6679259385116085266}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8433136368374082992
+--- !u!114 &3906961687886719931
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4052517462454521148}
+  m_GameObject: {fileID: 634240984020219809}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 39027a76cf8b6ba4ba12b5f145512970, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ClayHarvester
   resourceName: Clay Deposit
-  harvestTime: 1.5
+  hitsToHarvest: 1
   amountPerHarvest: 2
   maxHarvests: 3
+  swingBoolName: IsSwinging
+  swingDuration: 1
+  respawnAfterDelay: 1
+  respawnDelay: 5
+  depositPrefabForRespawn: {fileID: 634240984020219809}
+  harvestEffect: {fileID: 0}
+  harvestSound: {fileID: 8300000, guid: 10df2b8ba14d6d9429d8a4b8e2f4c729, type: 3}
+  depletedVisual: {fileID: 0}
+  shakeDuration: 0.3
+  shakeAmount: 0.05
+--- !u!208 &4945575601535125686
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 634240984020219809}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 4, y: 1, z: 4}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 2.5, y: 0, z: 5}
+  m_TimeToStationary: 0.5
 --- !u!1 &6672685568611687158
 GameObject:
   m_ObjectHideFlags: 0

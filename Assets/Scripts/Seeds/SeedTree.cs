@@ -188,7 +188,7 @@ public class SeedTree : MonoBehaviour
     {
         if (seedCollectEffect != null) seedCollectEffect.Play();
         if (seedCollectSound != null && audioSource != null)
-            audioSource.PlayOneShot(seedCollectSound);
+            SoundManager.Instance.PlaySFXOneShot(seedCollectSound);
     }
 
     private IEnumerator ShakeTree()

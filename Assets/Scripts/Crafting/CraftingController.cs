@@ -13,6 +13,7 @@ public class CraftingController : MonoBehaviour
     [Header("Placement Settings")]
     public LayerMask placementMask;
     public float placementMaxDistance = 50f;
+    public float maxSlopeAngle = 30f;              // <-- NEW: max terrain slope (degrees)
     public Material validPlacementMaterial;
     public Material invalidPlacementMaterial;
 
@@ -68,7 +69,7 @@ public class CraftingController : MonoBehaviour
             mainCamera = placementCamera;
             Debug.Log($"CraftingController: Using assigned camera: {mainCamera.name}");
         }
-        
+
         mouse = Mouse.current;
         keyboard = Keyboard.current;
     }
@@ -100,43 +101,43 @@ public class CraftingController : MonoBehaviour
     private void StartPlacement(CraftingRecipe recipe)
     {
         currentRecipe = recipe;
-        
+
         if (recipe.resultPrefab == null)
         {
             Debug.LogError("CraftingController: Recipe has no resultPrefab!");
             return;
         }
-        
+
         placementPreview = Instantiate(recipe.resultPrefab);
-        
+
         if (placementPreview == null)
         {
             Debug.LogError("CraftingController: Failed to instantiate preview!");
             return;
         }
-        
+
         RemoveCollidersFromPreview(placementPreview);
         SetPreviewMaterial(placementPreview, validPlacementMaterial);
-        
+
         // Ensure preview is active and visible
         placementPreview.SetActive(true);
-        
+
         // Debug layer and rendering
         var renderers = placementPreview.GetComponentsInChildren<Renderer>();
         foreach (var renderer in renderers)
         {
             Debug.Log($"CraftingController: Renderer layer={LayerMask.LayerToName(renderer.gameObject.layer)}, enabled={renderer.enabled}, castShadows={renderer.shadowCastingMode}");
         }
-        
+
         isPlacing = true;
         CraftingUIManager.Instance?.SetUIVisible(false);
-        
+
         // Show placement instructions in HUD
         if (HUDManager.Instance != null)
         {
             HUDManager.Instance.ShowMessage("Left Click to Place | X to Cancel", 999f);
         }
-        
+
         Debug.Log($"CraftingController: Started placement for {recipe.recipeName}. Preview has {renderers.Length} renderers.");
     }
 
@@ -150,7 +151,6 @@ public class CraftingController : MonoBehaviour
         }
 
         // Position preview based on camera looking direction
-        Vector3 cameraForward = mainCamera.transform.position + mainCamera.transform.forward * placementMaxDistance;
         Ray ray = new Ray(mainCamera.transform.position, mainCamera.transform.forward);
         RaycastHit hit;
 
@@ -191,11 +191,19 @@ public class CraftingController : MonoBehaviour
         }
     }
 
+    // ============ MODIFIED: Slope Check Only ============
     private bool IsPlacementValid(RaycastHit hit)
     {
-        // Add custom validation here (slope, overlaps, etc.)
+        // Calculate the angle between the surface normal and world up
+        float slope = Vector3.Angle(hit.normal, Vector3.up);
+        // If the slope is steeper than the allowed maximum, placement is invalid
+        if (slope > maxSlopeAngle)
+            return false;
+
+        // Otherwise, placement is valid
         return true;
     }
+    // ===================================================
 
     private void ConfirmPlacement(Vector3 position)
     {
@@ -209,21 +217,21 @@ public class CraftingController : MonoBehaviour
         {
             spawnedObject = Instantiate(currentRecipe.resultPrefab, position, Quaternion.identity);
         }
-        
+
         Destroy(placementPreview);
         isPlacing = false;
         currentRecipe = null;
-        
+
         // Show success message
         if (HUDManager.Instance != null)
         {
             HUDManager.Instance.ShowMessage("Pot placed successfully!", 2f);
         }
-        
+
         // Close crafting UI and sync cursor
         CraftingUIManager.Instance?.SetUIVisible(false);
         CraftingUIManager.Instance?.RefreshUI();
-        
+
         if (KeyboardInputManager.Instance != null)
         {
             KeyboardInputManager.Instance.SetCraftOpen(false);
@@ -238,23 +246,23 @@ public class CraftingController : MonoBehaviour
 
         isPlacing = false;
         currentRecipe = null;
-        
+
         // Hide placement message
         if (HUDManager.Instance != null)
         {
             HUDManager.Instance.ShowMessage("Placement cancelled", 2f);
         }
-        
+
         // Close crafting UI and sync cursor
         CraftingUIManager.Instance?.SetUIVisible(false);
         CraftingUIManager.Instance?.RefreshUI();
-        
+
         if (KeyboardInputManager.Instance != null)
         {
             KeyboardInputManager.Instance.SetCraftOpen(false);
             KeyboardInputManager.Instance.SyncCursorState();
         }
-        
+
         Debug.Log("Placement cancelled");
     }
 
@@ -270,14 +278,14 @@ public class CraftingController : MonoBehaviour
     {
         var renderers = obj.GetComponentsInChildren<Renderer>();
         Debug.Log($"CraftingController: Setting preview material on {renderers.Length} renderers. Material: {(mat != null ? mat.name : "null")}");
-        
+
         if (mat == null)
         {
             Debug.LogWarning("CraftingController: Material is null! Creating fallback material.");
             mat = new Material(Shader.Find("Standard"));
             mat.color = new Color(0.5f, 1f, 0.5f, 0.5f); // Semi-transparent green
         }
-        
+
         foreach (var renderer in renderers)
         {
             renderer.material = mat;
@@ -287,17 +295,17 @@ public class CraftingController : MonoBehaviour
     private void UpdatePreviewMaterial(Material mat)
     {
         if (placementPreview == null) return;
-        
+
         if (mat == null)
         {
             Debug.LogWarning("CraftingController: UpdatePreviewMaterial - Material is null! Using fallback.");
             mat = new Material(Shader.Find("Standard"));
             mat.color = new Color(1f, 0.5f, 0.5f, 0.5f); // Semi-transparent red for invalid
         }
-        
+
         var renderers = placementPreview.GetComponentsInChildren<Renderer>();
         Debug.Log($"CraftingController: Updating preview material on {renderers.Length} renderers. Position: {placementPreview.transform.position}, Material: {mat.name}");
-        
+
         foreach (var renderer in renderers)
         {
             renderer.material = mat;
@@ -316,21 +324,14 @@ public class CraftingController : MonoBehaviour
         if (!showPlacementGizmos || !isPlacing)
             return;
 
-        // Determine which camera to use for the ray visualization
         Camera cameraToUse = mainCamera != null ? mainCamera : Camera.main;
         if (cameraToUse == null)
             return;
 
-        // Draw sphere at placement position
-        Gizmos.color = lastRaycastHit ? Color.blue : new Color(1f, 0.5f, 0f); // Blue if hit, Orange if no hit
+        Gizmos.color = lastRaycastHit ? Color.blue : new Color(1f, 0.5f, 0f);
         Gizmos.DrawSphere(lastPreviewPosition, gizmoSize);
-        
-        // Draw a wireframe cube for better visibility
         Gizmos.DrawWireCube(lastPreviewPosition, Vector3.one * gizmoSize * 2f);
-        
-        // Draw a line from camera to placement point
         Gizmos.color = lastRaycastHit ? Color.blue : new Color(1f, 0.5f, 0f);
         Gizmos.DrawLine(cameraToUse.transform.position, lastPreviewPosition);
     }
-
 }

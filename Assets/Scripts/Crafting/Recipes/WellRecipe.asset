@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6988e98d4a5bfb40b0b2504676ddfe4, type: 3}
   m_Name: WellRecipe
   m_EditorClassIdentifier: Assembly-CSharp::CraftingRecipe
-  recipeName: well
-  icon: {fileID: 0}
+  recipeName: Well
+  icon: {fileID: 21300000, guid: afe380adbd85f0448a522539debec6a6, type: 3}
   resultPrefab: {fileID: 1341526311017406106, guid: 0cb9e46a52159c3438885f2295cbff76, type: 3}
   parentTransform: {fileID: 0}
   requiredResources:

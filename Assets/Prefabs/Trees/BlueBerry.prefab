@@ -322,6 +322,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7296054959696050501, guid: 367ab66e2689a8345a8fb8fd14a4f90c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 4835887015233261101}
+    - targetCorrespondingSourceObject: {fileID: 7296054959696050501, guid: 367ab66e2689a8345a8fb8fd14a4f90c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6907818061989781443}
   m_SourcePrefab: {fileID: 100100000, guid: 367ab66e2689a8345a8fb8fd14a4f90c, type: 3}
 --- !u!4 &6921155046315303330 stripped
 Transform:
@@ -366,7 +369,7 @@ MonoBehaviour:
   showTimerInPrompt: 1
   highlightMaterial: {fileID: 2100000, guid: 6eaad0870d03bc84eb3752c0a78c017a, type: 2}
   seedCollectEffect: {fileID: 0}
-  seedCollectSound: {fileID: 0}
+  seedCollectSound: {fileID: 8300000, guid: d4a989844642dea499afd870957e67ea, type: 3}
 --- !u!114 &-1421694035128896399
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -386,7 +389,7 @@ MonoBehaviour:
   respawnDelay: 5
   treePrefabForRespawn: {fileID: 7730201663343360792}
   cutEffect: {fileID: 0}
-  cutSound: {fileID: 0}
+  cutSound: {fileID: 8300000, guid: 1f9d5b3758e93a54797c00f59b503929, type: 3}
   stumpPrefab: {fileID: 919132149155446097, guid: f42a2ed0c78e45643bba339ed33235d4, type: 3}
   shakeDuration: 0.3
   shakeAmount: 0.05
@@ -464,6 +467,22 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!208 &6907818061989781443
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7730201663343360792}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.5, y: 1, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1001 &4318943801328747209
 PrefabInstance:
   m_ObjectHideFlags: 0

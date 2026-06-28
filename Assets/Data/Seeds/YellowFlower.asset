@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: YellowFlower
   m_EditorClassIdentifier: Assembly-CSharp::FlowerSeedData
   seedName: YellowFlower
-  seedIcon: {fileID: 0}
+  seedIcon: {fileID: 21300000, guid: 2139cc04a2ef2b34785b3f079efa3d64, type: 3}
   flowerPrefab: {fileID: 2661361071305136523, guid: 9e5a78de79c1ab04d89c9c73c3bf49e8, type: 3}

@@ -4029,9 +4029,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5000001
-  m_Height: 2
+  m_Height: 5.295887
   m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+  m_Center: {x: 0.000000050193385, y: 1.8155255, z: -0.00000010038677}
 --- !u!1 &852483591900148357
 GameObject:
   m_ObjectHideFlags: 0
@@ -6812,9 +6812,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 4.99617
-  m_Height: 17.762669
+  m_Height: 12.966499
   m_Direction: 1
-  m_Center: {x: 4.526642, y: 1.1248231, z: 0.92375183}
+  m_Center: {x: 4.526642, y: 4.8636913, z: 0.92375183}
 --- !u!1 &1395271902726413791
 GameObject:
   m_ObjectHideFlags: 0
@@ -25435,7 +25435,8 @@ GameObject:
   - component: {fileID: 735631372331484706}
   - component: {fileID: 5383049003223706289}
   - component: {fileID: 2042780477465476410}
-  - component: {fileID: 20123905635087054}
+  - component: {fileID: 522111902411608022}
+  - component: {fileID: 4794885404265923292}
   m_Layer: 8
   m_Name: Wellground
   m_TagString: Untagged
@@ -25515,8 +25516,8 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!136 &20123905635087054
-CapsuleCollider:
+--- !u!64 &522111902411608022
+MeshCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
@@ -25533,11 +25534,26 @@ CapsuleCollider:
   m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5000001
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+  serializedVersion: 5
+  m_Convex: 1
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!208 &4794885404265923292
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4876300059349619982}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 0
+  m_Extents: {x: 0.5, y: 1, z: 0.5}
+  m_MoveThreshold: 0.1
+  m_Carve: 0
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &4901393998668865172
 GameObject:
   m_ObjectHideFlags: 0
@@ -27568,9 +27584,9 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5000001
-  m_Height: 2
+  m_Height: 20.432722
   m_Direction: 1
-  m_Center: {x: 0.000000059604645, y: 0, z: -0.00000008940697}
+  m_Center: {x: 0.000000052313638, y: 5.8309307, z: -0.000000098612354}
 --- !u!114 &607247537930843172
 MonoBehaviour:
   m_ObjectHideFlags: 0

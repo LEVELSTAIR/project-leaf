@@ -549,6 +549,7 @@ GameObject:
   - component: {fileID: 183196423751561884}
   - component: {fileID: 1571518764956384748}
   - component: {fileID: 5101223769667840912}
+  - component: {fileID: 1034650149621365599}
   m_Layer: 0
   m_Name: Soil
   m_TagString: Untagged
@@ -704,6 +705,22 @@ MonoBehaviour:
   detailPrototypeIndex: 0
   clearRadius: 3
   clearOnStart: 1
+--- !u!208 &1034650149621365599
+NavMeshObstacle:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 598069646620233320}
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Shape: 1
+  m_Extents: {x: 0.75, y: 1.5, z: 0.75}
+  m_MoveThreshold: 0.1
+  m_Carve: 1
+  m_CarveOnlyStationary: 1
+  m_Center: {x: 0, y: 0, z: 0}
+  m_TimeToStationary: 0.5
 --- !u!1 &623165793980570441
 GameObject:
   m_ObjectHideFlags: 0

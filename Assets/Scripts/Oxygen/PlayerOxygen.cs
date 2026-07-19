@@ -38,6 +38,22 @@ public class PlayerOxygen : MonoBehaviour
         UpdateHUD();
     }
 
+    // ref for save system
+    public float CurrentOxygen => currentOxygen;
+    public float MaxOxygen => maxOxygen;
+
+    /// <summary>
+    /// Apply saved oxygen data.
+    /// </summary>
+    public void LoadFromSave(SaveData data)
+    {
+        maxOxygen = data.maxOxygen;
+        currentOxygen = data.currentOxygen;
+        if (currentOxygen < 0) currentOxygen = 0;
+        if (currentOxygen > maxOxygen) currentOxygen = maxOxygen;
+        UpdateHUD();
+    }
+
     private void Update()
     {
         IsInOxygenZone = IsPlayerInsideAnyZone();

@@ -186,6 +186,7 @@ GameObject:
   - component: {fileID: 4740875365211282382}
   - component: {fileID: 4046528357535566646}
   - component: {fileID: 6603717005162388866}
+  - component: {fileID: 808192538879821483}
   m_Layer: 0
   m_Name: FirstPersonController
   m_TagString: Player
@@ -475,6 +476,38 @@ MonoBehaviour:
   damagePerSecond: 5
   damageTickInterval: 1
   startupDelay: 0
+--- !u!114 &808192538879821483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4459864850019384750}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 470fd63357775dc4cbeff6551f49ae46, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::FootstepManager
+  controller: {fileID: 4459864850019384740}
+  footRayOrigin: {fileID: 3683911510860665296}
+  grassFootsteps:
+  - {fileID: 8300000, guid: 551d550ab98e3cc4bb7793e752fe8628, type: 3}
+  snowFootsteps:
+  - {fileID: 8300000, guid: 3c1967f6644f7ee4cb90dd9da24dd7da, type: 3}
+  desertFootsteps:
+  - {fileID: 8300000, guid: 557e96b16076cb84285c90941906b44c, type: 3}
+  lushFootsteps: []
+  defaultFootsteps: []
+  groundLayerMask:
+    serializedVersion: 2
+    m_Bits: 128
+  raycastDistance: 1.5
+  walkStepInterval: 0.5
+  sprintStepInterval: 0.3
+  crouchStepInterval: 0.7
+  footstepVolume: 0.5
+  pitchVariation: 0.8
+  showDebugLogs: 0
 --- !u!1 &4459864850190357393
 GameObject:
   m_ObjectHideFlags: 0

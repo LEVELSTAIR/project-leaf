@@ -15,12 +15,11 @@ public class TreeCuttable : MonoBehaviour
     [Header("Respawn")]
     public bool respawnAfterDelay = false;
     public float respawnDelay = 300f;
-    public GameObject treePrefabForRespawn;
 
     [Header("Visual & Audio")]
     public ParticleSystem cutEffect;
     public AudioClip cutSound;
-    public GameObject stumpPrefab;
+    public GameObject stumpObject;          // <-- NEW: assign a child stump GameObject
 
     [Header("Shake Settings")]
     public float shakeDuration = 0.3f;
@@ -34,16 +33,21 @@ public class TreeCuttable : MonoBehaviour
     private bool isChopping = false;
     private Collider treeCollider;
     private GameObject treeVisual;
-    private GameObject currentStump;
+    private Renderer[] treeRenderers;       // For toggling visibility
+    private Collider[] treeColliders;       // For toggling interaction
 
     private void Start()
     {
         currentHits = hitsToCut;
         treeCollider = GetComponent<Collider>();
-        // No local AudioSource – we use SoundManager instead
 
-        var renderer = GetComponentInChildren<Renderer>();
-        treeVisual = renderer != null ? renderer.gameObject : gameObject;
+        // Find all renderers and colliders on this GameObject and children
+        treeRenderers = GetComponentsInChildren<Renderer>();
+        treeColliders = GetComponentsInChildren<Collider>();
+
+        // If stumpObject is a child, make sure it starts hidden
+        if (stumpObject != null)
+            stumpObject.SetActive(false);
     }
 
     public void CutTree()
@@ -53,13 +57,9 @@ public class TreeCuttable : MonoBehaviour
         isChopping = true;
 
         if (AxeAnimatorHelper.Instance != null)
-        {
             AxeAnimatorHelper.Instance.PlayChop(chopBoolName, chopAnimationDuration);
-        }
         else
-        {
-            Debug.LogWarning("AxeAnimatorHelper.Instance not found – axe animation will not play");
-        }
+            Debug.LogWarning("AxeAnimatorHelper.Instance not found");
 
         StartCoroutine(ApplyHitAfterDelay());
     }
@@ -90,51 +90,57 @@ public class TreeCuttable : MonoBehaviour
         isCutDown = true;
         isChopping = false;
 
+        // Add wood
         if (InventoryManager.Instance != null)
             InventoryManager.Instance.AddItem(woodItemName, ItemType.Wood, woodAmount);
 
         HUDManager.Instance?.ShowMessage($"<color=brown>+{woodAmount} wood</color>", 2f);
 
-        // Clear grass in the oxygen area
+        // Clear grass (if any)
         TreeGrassTerrainArea grassArea = GetComponent<TreeGrassTerrainArea>();
         if (grassArea != null)
             grassArea.ClearGrass();
 
-        // Disable all trigger colliders (backup)
-        Collider[] allColliders = GetComponentsInChildren<Collider>();
-        foreach (Collider col in allColliders)
-            if (col.isTrigger) col.enabled = false;
+        // ---- DISABLE instead of Destroy ----
+        // Hide all renderers
+        foreach (Renderer rend in treeRenderers)
+            rend.enabled = false;
 
-        Vector3 treePos = transform.position;
-        Quaternion treeRot = transform.rotation;
+        // Disable all colliders (so player can't interact)
+        foreach (Collider col in treeColliders)
+            col.enabled = false;
 
-        if (stumpPrefab != null)
-            currentStump = Instantiate(stumpPrefab, treePos, treeRot);
+        // Show stump (if assigned)
+        if (stumpObject != null)
+            stumpObject.SetActive(true);
 
-        Destroy(gameObject);
-
-        if (respawnAfterDelay && treePrefabForRespawn != null)
+        // Start respawn coroutine if enabled
+        if (respawnAfterDelay)
         {
             HUDManager.Instance?.ShowMessage($"Tree will regrow in {respawnDelay / 60f:F1} min.", 3f);
-            StartCoroutine(RespawnTreeAfterDelay(treePos, treeRot));
+            StartCoroutine(RespawnTreeAfterDelay());
         }
     }
 
-    private IEnumerator RespawnTreeAfterDelay(Vector3 position, Quaternion rotation)
+    private IEnumerator RespawnTreeAfterDelay()
     {
         yield return new WaitForSeconds(respawnDelay);
 
-        if (currentStump != null)
-            Destroy(currentStump);
+        // Re-enable the tree
+        isCutDown = false;
+        currentHits = hitsToCut;
 
-        GameObject newTree = Instantiate(treePrefabForRespawn, position, rotation);
-        TreeCuttable newScript = newTree.GetComponent<TreeCuttable>();
-        if (newScript != null)
-        {
-            newScript.currentHits = newScript.hitsToCut;
-            newScript.isCutDown = false;
-            newScript.isChopping = false;
-        }
+        // Show renderers
+        foreach (Renderer rend in treeRenderers)
+            rend.enabled = true;
+
+        // Re-enable colliders
+        foreach (Collider col in treeColliders)
+            col.enabled = true;
+
+        // Hide stump
+        if (stumpObject != null)
+            stumpObject.SetActive(false);
 
         HUDManager.Instance?.ShowMessage("A tree has regrown!", 3f);
     }
@@ -143,14 +149,8 @@ public class TreeCuttable : MonoBehaviour
     {
         if (cutEffect != null) cutEffect.Play();
 
-        // Use SoundManager instead of a local AudioSource
-        if (cutSound != null)
-        {
-            if (SoundManager.Instance != null)
-                SoundManager.Instance.PlaySFXOneShot(cutSound, 1f);
-            else
-                Debug.LogWarning("SoundManager.Instance not found – cannot play cut sound.");
-        }
+        if (cutSound != null && SoundManager.Instance != null)
+            SoundManager.Instance.PlaySFXOneShot(cutSound, 1f);
     }
 
     private IEnumerator ShakeTree()

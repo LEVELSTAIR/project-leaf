@@ -1,7 +1,8 @@
 using UnityEngine;
 using System.IO;
 using System;
-using UnityEngine.InputSystem;   // Required for Keyboard.current
+using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 public class SaveManager : MonoBehaviour
 {
@@ -9,10 +10,8 @@ public class SaveManager : MonoBehaviour
 
     [Header("Save Settings")]
     [SerializeField] private string saveFileName = "save.json";
-    [SerializeField] private KeyCode saveKey = KeyCode.F5;   // Not used, kept for reference
 
     private string savePath;
-    private SaveData currentSaveData;
 
     private void Awake()
     {
@@ -29,20 +28,14 @@ public class SaveManager : MonoBehaviour
 
     private void Update()
     {
-        // ---------- Use the new Input System ----------
-        // Check if F5 was pressed this frame
         if (Keyboard.current != null && Keyboard.current.f5Key.wasPressedThisFrame)
         {
             SaveGame();
         }
     }
 
-    /// <summary>
-    /// Saves the current player state to disk.
-    /// </summary>
     public void SaveGame()
     {
-        // Find the player
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player == null)
         {
@@ -50,14 +43,12 @@ public class SaveManager : MonoBehaviour
             return;
         }
 
-        // Gather data
         SaveData data = new SaveData();
 
-        // Position & rotation
+        // ---- Player ----
         data.SetPosition(player.transform.position);
         data.SetRotation(player.transform.rotation);
 
-        // Health
         PlayerHealthManager health = player.GetComponent<PlayerHealthManager>();
         if (health != null)
         {
@@ -65,7 +56,6 @@ public class SaveManager : MonoBehaviour
             data.maxHealth = health.MaxHealth;
         }
 
-        // Oxygen
         PlayerOxygen oxygen = player.GetComponent<PlayerOxygen>();
         if (oxygen != null)
         {
@@ -73,16 +63,14 @@ public class SaveManager : MonoBehaviour
             data.maxOxygen = oxygen.MaxOxygen;
         }
 
-        // Serialize to JSON and write to file
+        // ---- Trees (unified) ----
+        SaveTrees(data);
+
         string json = JsonUtility.ToJson(data, true);
         File.WriteAllText(savePath, json);
-
         Debug.Log($"Game saved to {savePath}");
     }
 
-    /// <summary>
-    /// Loads save data from disk. Returns true if a valid save exists.
-    /// </summary>
     public bool LoadGame(out SaveData data)
     {
         data = null;
@@ -105,20 +93,101 @@ public class SaveManager : MonoBehaviour
         }
     }
 
-    /// <summary>
-    /// Checks if a save file exists.
-    /// </summary>
     public bool HasSave() => File.Exists(savePath);
 
-    /// <summary>
-    /// Deletes the save file.
-    /// </summary>
     public void DeleteSave()
     {
         if (File.Exists(savePath))
         {
             File.Delete(savePath);
             Debug.Log("Save file deleted.");
+        }
+    }
+
+    // ---------- Unified Tree Saving ----------
+
+    private void SaveTrees(SaveData data)
+    {
+        data.treeStates.Clear();
+
+        TreeIdentifier[] allTreeIDs = FindObjectsOfType<TreeIdentifier>();
+        foreach (var idComp in allTreeIDs)
+        {
+            GameObject go = idComp.gameObject;
+            TreeState state = new TreeState
+            {
+                id = idComp.UniqueID,
+
+                // Position & Rotation
+                posX = go.transform.position.x,
+                posY = go.transform.position.y,
+                posZ = go.transform.position.z,
+                rotX = go.transform.rotation.x,
+                rotY = go.transform.rotation.y,
+                rotZ = go.transform.rotation.z,
+                rotW = go.transform.rotation.w
+            };
+
+            // TreeCuttable data
+            TreeCuttable cuttable = go.GetComponent<TreeCuttable>();
+            if (cuttable != null)
+            {
+                state.isCutDown = cuttable.IsCutDown;
+                state.currentHits = cuttable.CurrentHits;
+                state.respawnTimeRemaining = cuttable.RespawnTimeRemaining;
+            }
+            else
+            {
+                state.isCutDown = false;
+                state.currentHits = 0;
+                state.respawnTimeRemaining = 0f;
+            }
+
+            // SeedTree data
+            SeedTree seedTree = go.GetComponent<SeedTree>();
+            if (seedTree != null)
+            {
+                state.isRegrowing = seedTree.IsRegrowing;
+                state.regrowTimeRemaining = seedTree.RegrowTimeRemaining;
+                state.harvestCount = seedTree.HarvestCount;
+                state.regrowCycleCount = seedTree.RegrowCycleCount;
+            }
+            else
+            {
+                state.isRegrowing = false;
+                state.regrowTimeRemaining = 0f;
+                state.harvestCount = 0;
+                state.regrowCycleCount = 0;
+            }
+
+            data.treeStates.Add(state);
+        }
+    }
+
+    public void ApplyTreeStates(SaveData data)
+    {
+        if (data == null || data.treeStates == null || data.treeStates.Count == 0)
+            return;
+
+        // Apply to all existing trees in the scene
+        TreeIdentifier[] allTreeIDs = FindObjectsOfType<TreeIdentifier>();
+        foreach (var idComp in allTreeIDs)
+        {
+            TreeState state = data.treeStates.Find(s => s.id == idComp.UniqueID);
+            if (state == null) continue;
+
+            GameObject go = idComp.gameObject;
+
+            // Restore position/rotation
+            go.transform.position = new Vector3(state.posX, state.posY, state.posZ);
+            go.transform.rotation = new Quaternion(state.rotX, state.rotY, state.rotZ, state.rotW);
+
+            // Apply to components
+            TreeCuttable cuttable = go.GetComponent<TreeCuttable>();
+            if (cuttable != null) cuttable.LoadState(state);
+
+            SeedTree seedTree = go.GetComponent<SeedTree>();
+            if (seedTree != null) seedTree.LoadState(state);
         }
     }
 }

@@ -1,6 +1,13 @@
 using UnityEngine;
 using System.Collections;
 
+// Enum to select skybox behavior
+public enum SkyboxMode
+{
+    Instant,      // Directly swap skybox materials (no blending)
+    BlendShader   // Use custom shader to smoothly blend between two cubemaps
+}
+
 public class DayNightManager : MonoBehaviour
 {
     public static DayNightManager Instance { get; private set; }
@@ -28,11 +35,33 @@ public class DayNightManager : MonoBehaviour
     public float sunsetIntensity = 0.5f;
     public float nightIntensity = 0.05f;
 
+    // ================== UPDATED SKYBOX SECTION ==================
     [Header("Skybox Settings")]
+    [Tooltip("How the skybox changes: Instant (swap materials) or BlendShader (smooth cubemap blend)")]
+    public SkyboxMode skyboxMode = SkyboxMode.Instant;
+
+    // --- Instant Mode Materials ---
+    [Tooltip("(Instant Mode) Skybox material for daytime")]
     public Material daySkybox;
+    [Tooltip("(Instant Mode) Skybox material for nighttime")]
     public Material nightSkybox;
+    [Tooltip("(Instant Mode) Skybox material for sunrise (optional)")]
     public Material sunriseSkybox;
+    [Tooltip("(Instant Mode) Skybox material for sunset (optional)")]
     public Material sunsetSkybox;
+
+    // --- Blend Shader Mode ---
+    [Tooltip("(Blend Shader Mode) Material using the Custom/BlendSkybox shader")]
+    public Material skyboxBlendMaterial;
+    [Tooltip("(Blend Shader Mode) Cubemap for daytime")]
+    public Cubemap dayCubemap;
+    [Tooltip("(Blend Shader Mode) Cubemap for nighttime")]
+    public Cubemap nightCubemap;
+    [Tooltip("(Blend Shader Mode) Cubemap for sunrise (optional, falls back to day)")]
+    public Cubemap sunriseCubemap;
+    [Tooltip("(Blend Shader Mode) Cubemap for sunset (optional, falls back to night)")]
+    public Cubemap sunsetCubemap;
+    // ===========================================================
 
     [Header("Day/Night Thresholds")]
     public float sunriseStartHour = 5f;
@@ -51,7 +80,7 @@ public class DayNightManager : MonoBehaviour
     [Header("Transition Settings")]
     public float transitionSmoothness = 2f;
 
-    // ========== NEW MUSIC SETTINGS ==========
+    // ========== MUSIC SETTINGS ==========
     [Header("Music")]
     public AudioClip dayMusic;
     public AudioClip nightMusic;
@@ -71,7 +100,7 @@ public class DayNightManager : MonoBehaviour
     private float targetIntensity;
     private Color targetAmbientColor;
 
-    // ========== NEW MUSIC VARIABLES ==========
+    // ========== MUSIC VARIABLES ==========
     private string currentMusicPeriod = ""; // Tracks last played period to avoid redundant switches
     private Coroutine musicFadeCoroutine;
 
@@ -101,6 +130,37 @@ public class DayNightManager : MonoBehaviour
         sunLight.intensity = targetIntensity;
         RenderSettings.ambientLight = targetAmbientColor;
 
+        // ---------- Initialize Skybox based on selected mode ----------
+        if (skyboxMode == SkyboxMode.Instant)
+        {
+            // Set the initial skybox material instantly
+            Material initialSky = GetTargetSkyboxMaterial();
+            if (initialSky != null)
+            {
+                RenderSettings.skybox = initialSky;
+                DynamicGI.UpdateEnvironment();
+            }
+            else
+            {
+                Debug.LogWarning("DayNightManager: No initial skybox material found for Instant mode.");
+            }
+        }
+        else // BlendShader
+        {
+            if (skyboxBlendMaterial != null)
+            {
+                RenderSettings.skybox = skyboxBlendMaterial;
+                // Update the blend parameters immediately to match the current time
+                UpdateSkyboxBlendParameters();
+                DynamicGI.UpdateEnvironment();
+            }
+            else
+            {
+                Debug.LogError("DayNightManager: Skybox Blend Material is not assigned, but BlendShader mode is selected.");
+            }
+        }
+        // --------------------------------------------------------------
+
         // Set initial music
         UpdateMusic();
     }
@@ -111,11 +171,11 @@ public class DayNightManager : MonoBehaviour
         UpdateSunRotation();
         UpdateLightingTargets();
         ApplyLightingSmooth();
-        UpdateSkybox();
+        UpdateSkybox(); // Now handles both modes
         UpdateDayNightState();
         UpdateHUDClock();
 
-        // ========== CHECK FOR MUSIC CHANGE ==========
+        // Check for music change
         UpdateMusic();
     }
 
@@ -215,18 +275,28 @@ public class DayNightManager : MonoBehaviour
         RenderSettings.ambientLight = Color.Lerp(RenderSettings.ambientLight, targetAmbientColor, smoothTime);
     }
 
+    // ================== UPDATED SKYBOX LOGIC ==================
+    /// <summary>
+    /// Main skybox update method that branches based on the selected mode.
+    /// </summary>
     void UpdateSkybox()
     {
-        Material targetSkybox = nightSkybox;
+        if (skyboxMode == SkyboxMode.Instant)
+        {
+            UpdateSkyboxInstant();
+        }
+        else if (skyboxMode == SkyboxMode.BlendShader)
+        {
+            UpdateSkyboxBlendParameters();
+        }
+    }
 
-        if (currentTime >= nightStartHour || currentTime < sunriseStartHour)
-            targetSkybox = nightSkybox;
-        else if (currentTime >= sunriseStartHour && currentTime < sunriseEndHour)
-            targetSkybox = sunriseSkybox ? sunriseSkybox : daySkybox;
-        else if (currentTime >= dayStartHour && currentTime < sunsetStartHour)
-            targetSkybox = daySkybox;
-        else if (currentTime >= sunsetStartHour && currentTime < sunsetEndHour)
-            targetSkybox = sunsetSkybox ? sunsetSkybox : nightSkybox;
+    /// <summary>
+    /// Original instant-swap logic.
+    /// </summary>
+    private void UpdateSkyboxInstant()
+    {
+        Material targetSkybox = GetTargetSkyboxMaterial();
 
         if (RenderSettings.skybox != targetSkybox && targetSkybox != null)
         {
@@ -234,6 +304,98 @@ public class DayNightManager : MonoBehaviour
             DynamicGI.UpdateEnvironment();
         }
     }
+
+    /// <summary>
+    /// Gets the appropriate skybox material for the current time (for Instant mode).
+    /// </summary>
+    private Material GetTargetSkyboxMaterial()
+    {
+        if (currentTime >= nightStartHour || currentTime < sunriseStartHour)
+            return nightSkybox;
+        else if (currentTime >= sunriseStartHour && currentTime < sunriseEndHour)
+            return sunriseSkybox ? sunriseSkybox : daySkybox;
+        else if (currentTime >= dayStartHour && currentTime < sunsetStartHour)
+            return daySkybox;
+        else if (currentTime >= sunsetStartHour && currentTime < sunsetEndHour)
+            return sunsetSkybox ? sunsetSkybox : nightSkybox;
+
+        return nightSkybox; // fallback
+    }
+
+    /// <summary>
+    /// Smooth blend logic using the custom skybox shader.
+    /// </summary>
+    private void UpdateSkyboxBlendParameters()
+    {
+        if (skyboxBlendMaterial == null) return;
+
+        // Determine which two cubemaps to blend and the blend factor
+        Cubemap sky1 = nightCubemap;
+        Cubemap sky2 = nightCubemap;
+        float blend = 0f;
+
+        if (currentTime >= nightStartHour || currentTime < sunriseStartHour)
+        {
+            // Night – both same (no blend)
+            sky1 = nightCubemap;
+            sky2 = nightCubemap;
+            blend = 0f;
+        }
+        else if (currentTime >= sunriseStartHour && currentTime < sunriseEndHour)
+        {
+            // Sunrise: blend from night -> sunrise -> day
+            float t = (currentTime - sunriseStartHour) / (sunriseEndHour - sunriseStartHour);
+            if (t < 0.5f)
+            {
+                float subT = t * 2f; // 0->1
+                sky1 = nightCubemap;
+                sky2 = sunriseCubemap != null ? sunriseCubemap : dayCubemap;
+                blend = subT;
+            }
+            else
+            {
+                float subT = (t - 0.5f) * 2f; // 0->1
+                sky1 = sunriseCubemap != null ? sunriseCubemap : dayCubemap;
+                sky2 = dayCubemap;
+                blend = subT;
+            }
+        }
+        else if (currentTime >= dayStartHour && currentTime < sunsetStartHour)
+        {
+            // Day – constant
+            sky1 = dayCubemap;
+            sky2 = dayCubemap;
+            blend = 0f;
+        }
+        else if (currentTime >= sunsetStartHour && currentTime < sunsetEndHour)
+        {
+            // Sunset: blend from day -> sunset -> night
+            float t = (currentTime - sunsetStartHour) / (sunsetEndHour - sunsetStartHour);
+            if (t < 0.5f)
+            {
+                float subT = t * 2f;
+                sky1 = dayCubemap;
+                sky2 = sunsetCubemap != null ? sunsetCubemap : nightCubemap;
+                blend = subT;
+            }
+            else
+            {
+                float subT = (t - 0.5f) * 2f;
+                sky1 = sunsetCubemap != null ? sunsetCubemap : nightCubemap;
+                sky2 = nightCubemap;
+                blend = subT;
+            }
+        }
+
+        // Apply to the blend material
+        skyboxBlendMaterial.SetTexture("_Skybox1", sky1);
+        skyboxBlendMaterial.SetTexture("_Skybox2", sky2);
+        skyboxBlendMaterial.SetFloat("_Blend", blend);
+
+        // Optional: If you want the skybox to rotate slowly, set "_Rotation" here.
+        // skyboxBlendMaterial.SetFloat("_Rotation", Time.time * 0.1f);
+    }
+    // ===========================================================
 
     void UpdateDayNightState()
     {
@@ -246,11 +408,7 @@ public class DayNightManager : MonoBehaviour
             HUDManager.Instance.UpdateTime(formattedTime);
     }
 
-    // ===================== NEW MUSIC LOGIC =====================
-
-    /// <summary>
-    /// Checks if the time period has changed and updates the background music accordingly.
-    /// </summary>
+    // ===================== MUSIC LOGIC =====================
     private void UpdateMusic()
     {
         if (SoundManager.Instance == null) return;
@@ -281,8 +439,7 @@ public class DayNightManager : MonoBehaviour
 
         Debug.Log($"DayNightManager: Changed music to '{clipToPlay.name}' for '{newPeriod}'.");
     }
-
-    // ===================== END MUSIC LOGIC =====================
+    // ========================================================
 
     public string GetFormattedTime() => formattedTime;
     public string GetCurrentPeriod() => currentPeriod;
@@ -308,6 +465,10 @@ public class DayNightManager : MonoBehaviour
         sunLight.color = targetLightColor;
         sunLight.intensity = targetIntensity;
         RenderSettings.ambientLight = targetAmbientColor;
+
+        // Force skybox update immediately based on the mode
+        UpdateSkybox();
+
         // Force music update immediately after time change
         currentMusicPeriod = ""; // reset to force update
         UpdateMusic();

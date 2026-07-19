@@ -328,6 +328,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 7296054959696050501, guid: 367ab66e2689a8345a8fb8fd14a4f90c, type: 3}
       insertIndex: -1
       addedObject: {fileID: 6907818061989781443}
+    - targetCorrespondingSourceObject: {fileID: 7296054959696050501, guid: 367ab66e2689a8345a8fb8fd14a4f90c, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6860846359589839568}
   m_SourcePrefab: {fileID: 100100000, guid: 367ab66e2689a8345a8fb8fd14a4f90c, type: 3}
 --- !u!4 &6921155046315303330 stripped
 Transform:
@@ -485,6 +488,19 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: 0, y: 0, z: 0}
   m_TimeToStationary: 0.5
+--- !u!114 &6860846359589839568
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7730201663343360792}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56227a7484985ce4d8a6c5a58037d841, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TreeIdentifier
+  uniqueID: add99808-5d60-44ea-938c-d05bd605ba15
 --- !u!1001 &4076976644619907382
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -37,12 +37,15 @@ public class PlayerSpawner : MonoBehaviour
                 var oxygen = player.GetComponent<PlayerOxygen>();
                 if (oxygen != null) oxygen.LoadFromSave(data);
 
-                Debug.Log("Player state restored from save.");
+                // ---- Apply tree states ----
+                SaveManager.Instance.ApplyTreeStates(data);
+
+                Debug.Log("Player state and tree states restored from save.");
             }
         }
         else
         {
-            // No save – just use the spawn point (already set)
+            // No save – just use the spawn point
             player.transform.position = spawnPoint.position;
             player.transform.rotation = spawnPoint.rotation;
         }

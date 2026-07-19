@@ -50,6 +50,24 @@ public class PlayerHealthManager : MonoBehaviour
             invincibilityTimer -= Time.deltaTime;
     }
 
+    // ref for save system
+    public int CurrentHealth => currentHealth;
+    public int MaxHealth => maxHealth;
+
+    /// <summary>
+    /// Apply saved health data.
+    /// </summary>
+    public void LoadFromSave(SaveData data)
+    {
+        maxHealth = data.maxHealth;
+        currentHealth = data.currentHealth;
+        if (currentHealth < 0) currentHealth = 0;
+        if (currentHealth > maxHealth) currentHealth = maxHealth;
+        UpdateHUD();
+        OnHealthChanged?.Invoke(currentHealth, maxHealth);
+    }
+
+
     /// <summary>
     /// Called when the player takes damage.
     /// </summary>

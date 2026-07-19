@@ -28906,7 +28906,8 @@ PrefabInstance:
       propertyPath: m_Name
       value: Dog
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 1860792578493465421, guid: a79b5cda10872624281b29b3154580f1, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
@@ -45157,7 +45158,6 @@ GameObject:
   - component: {fileID: 652282615}
   - component: {fileID: 652282614}
   - component: {fileID: 652282613}
-  - component: {fileID: 652282616}
   m_Layer: 0
   m_Name: Terrain
   m_TagString: Untagged
@@ -45240,41 +45240,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &652282616
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 652282611}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 647edcc21af1bc7488866f3fb9313181, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TerrainGeneratorWithRivers
-  seed: 50
-  heightmapResolution: 512
-  alphamapResolution: 2048
-  terrainSize: 2048
-  terrainHeight: 300
-  noiseScale: 100
-  octaves: 6
-  persistence: 0.5
-  lacunarity: 2
-  moistureNoiseScale: 200
-  moistureOctaves: 4
-  moisturePersistence: 0.4
-  moistureLacunarity: 2.5
-  snowHeight: 0.6
-  lowElevationMax: 0.3
-  dryMoistureMax: 0.3
-  falloffInnerRadius: 0.5
-  falloffOuterRadius: 0.98
-  carveRivers: 1
-  rivers: []
-  riverDepth: 0.15
-  riverWidth: 0.02
-  riverSplineSteps: 50
 --- !u!1 &652677785
 GameObject:
   m_ObjectHideFlags: 0
@@ -80020,6 +79985,79 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1158259533}
   m_Mesh: {fileID: 5811990557746906380, guid: 8c71f03fcb0c13644a30696cafc5cda8, type: 3}
+--- !u!1 &1159710610
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1159710613}
+  - component: {fileID: 1159710612}
+  - component: {fileID: 1159710611}
+  m_Layer: 5
+  m_Name: LoadingScreen
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1159710611
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1159710610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 381169fbfd269d1468983bdd5e473b25, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LoadingManager
+  loadingUIDocument: {fileID: 1159710612}
+  defaultMinimumTime: 0.5
+  defaultUseAnyKey: 0
+  defaultContinueKey: 1
+  defaultContinuePrompt: Press Space to continue
+--- !u!114 &1159710612
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1159710610}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 19102, guid: 0000000000000000e000000000000000, type: 0}
+  m_Name: 
+  m_EditorClassIdentifier: UnityEngine.dll::UnityEngine.UIElements.UIDocument
+  m_PanelSettings: {fileID: 11400000, guid: f1f4e37516a635d4cb2382e5fb721a11, type: 2}
+  m_ParentUI: {fileID: 0}
+  sourceAsset: {fileID: 9197481963319205126, guid: 62e8aff41a2534d4aa69a3f50cd7c8ec, type: 3}
+  m_SortingOrder: 0
+  m_Position: 0
+  m_WorldSpaceSizeMode: 1
+  m_WorldSpaceWidth: 1920
+  m_WorldSpaceHeight: 1080
+  m_PivotReferenceSize: 0
+  m_Pivot: 0
+  m_WorldSpaceCollider: {fileID: 0}
+--- !u!4 &1159710613
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1159710610}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1164885822
 GameObject:
   m_ObjectHideFlags: 0
@@ -150688,3 +150726,4 @@ SceneRoots:
   - {fileID: 2046070144}
   - {fileID: 1771119161}
   - {fileID: 1353403524}
+  - {fileID: 1159710613}

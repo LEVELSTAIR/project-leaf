@@ -3,27 +3,48 @@ using UnityEngine;
 public class PlayerSpawner : MonoBehaviour
 {
     [Header("Player Reference")]
-    [SerializeField] private GameObject playerPrefab;      // the player prefab (if you use one)
-    [SerializeField] private Transform spawnPoint;         // where to spawn
+    [SerializeField] private GameObject playerPrefab;
+    [SerializeField] private Transform spawnPoint;
 
-    void Start()
+    private void Start()
     {
-        // If you already placed the player manually in the scene, just move it
         GameObject player = GameObject.FindGameObjectWithTag("Player");
-        if (player != null)
+        if (player == null && playerPrefab != null)
         {
-            player.transform.position = spawnPoint.position;
-            player.transform.rotation = spawnPoint.rotation;
-            Debug.Log("Player moved to spawn point.");
+            player = Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
         }
-        // If you prefer to instantiate the player (e.g. after death)
-        else if (playerPrefab != null)
+
+        if (player == null)
         {
-            Instantiate(playerPrefab, spawnPoint.position, spawnPoint.rotation);
+            Debug.LogWarning("PlayerSpawner: No player found and no prefab assigned.");
+            return;
+        }
+
+        // If we have a saved game, apply it
+        if (SaveManager.Instance != null && SaveManager.Instance.HasSave())
+        {
+            if (SaveManager.Instance.LoadGame(out SaveData data))
+            {
+                // Position & Rotation
+                player.transform.position = data.GetPosition();
+                player.transform.rotation = data.GetRotation();
+
+                // Health
+                var health = player.GetComponent<PlayerHealthManager>();
+                if (health != null) health.LoadFromSave(data);
+
+                // Oxygen
+                var oxygen = player.GetComponent<PlayerOxygen>();
+                if (oxygen != null) oxygen.LoadFromSave(data);
+
+                Debug.Log("Player state restored from save.");
+            }
         }
         else
         {
-            Debug.LogWarning("No player found and no prefab assigned.");
+            // No save – just use the spawn point (already set)
+            player.transform.position = spawnPoint.position;
+            player.transform.rotation = spawnPoint.rotation;
         }
     }
 }

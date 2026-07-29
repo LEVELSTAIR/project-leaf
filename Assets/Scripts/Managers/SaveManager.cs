@@ -22,16 +22,13 @@ public class SaveManager : MonoBehaviour
         }
         Instance = this;
         DontDestroyOnLoad(gameObject);
-
         savePath = Path.Combine(Application.persistentDataPath, saveFileName);
     }
 
     private void Update()
     {
         if (Keyboard.current != null && Keyboard.current.f5Key.wasPressedThisFrame)
-        {
             SaveGame();
-        }
     }
 
     public void SaveGame()
@@ -39,7 +36,7 @@ public class SaveManager : MonoBehaviour
         GameObject player = GameObject.FindGameObjectWithTag("Player");
         if (player == null)
         {
-            Debug.LogWarning("SaveManager: No player found to save.");
+            Debug.LogWarning("SaveManager: No player found.");
             return;
         }
 
@@ -63,7 +60,7 @@ public class SaveManager : MonoBehaviour
             data.maxOxygen = oxygen.MaxOxygen;
         }
 
-        // ---- Trees (unified) ----
+        // ---- Trees (via unified controller) ----
         SaveTrees(data);
 
         string json = JsonUtility.ToJson(data, true);
@@ -94,7 +91,6 @@ public class SaveManager : MonoBehaviour
     }
 
     public bool HasSave() => File.Exists(savePath);
-
     public void DeleteSave()
     {
         if (File.Exists(savePath))
@@ -104,8 +100,7 @@ public class SaveManager : MonoBehaviour
         }
     }
 
-    // ---------- Unified Tree Saving ----------
-
+    // ---------- Unified tree saving ----------
     private void SaveTrees(SaveData data)
     {
         data.treeStates.Clear();
@@ -113,12 +108,11 @@ public class SaveManager : MonoBehaviour
         TreeIdentifier[] allTreeIDs = FindObjectsOfType<TreeIdentifier>();
         foreach (var idComp in allTreeIDs)
         {
+            Debug.Log($"Tree ID: {idComp.UniqueID}, active: {idComp.gameObject.activeInHierarchy}");
             GameObject go = idComp.gameObject;
             TreeState state = new TreeState
             {
                 id = idComp.UniqueID,
-
-                // Position & Rotation
                 posX = go.transform.position.x,
                 posY = go.transform.position.y,
                 posZ = go.transform.position.z,
@@ -128,66 +122,160 @@ public class SaveManager : MonoBehaviour
                 rotW = go.transform.rotation.w
             };
 
-            // TreeCuttable data
-            TreeCuttable cuttable = go.GetComponent<TreeCuttable>();
-            if (cuttable != null)
+            // ---- Prefab key ----
+            TreeUnifiedInteraction unified = go.GetComponent<TreeUnifiedInteraction>();
+            if (unified != null)
             {
-                state.isCutDown = cuttable.IsCutDown;
-                state.currentHits = cuttable.CurrentHits;
-                state.respawnTimeRemaining = cuttable.RespawnTimeRemaining;
-            }
-            else
-            {
-                state.isCutDown = false;
-                state.currentHits = 0;
-                state.respawnTimeRemaining = 0f;
-            }
+                // Use the unified controller to get all state
+                var unifiedState = unified.GetUnifiedState();
+                state.isCutDown = unifiedState.isCutDown;
+                state.currentHits = unifiedState.currentHits;
+                state.respawnTimeRemaining = unifiedState.respawnTimeRemaining;
+                state.isRegrowing = unifiedState.isRegrowing;
+                state.regrowTimeRemaining = unifiedState.regrowTimeRemaining;
+                state.harvestCount = unifiedState.harvestCount;
+                state.regrowCycleCount = unifiedState.regrowCycleCount;
 
-            // SeedTree data
-            SeedTree seedTree = go.GetComponent<SeedTree>();
-            if (seedTree != null)
-            {
-                state.isRegrowing = seedTree.IsRegrowing;
-                state.regrowTimeRemaining = seedTree.RegrowTimeRemaining;
-                state.harvestCount = seedTree.HarvestCount;
-                state.regrowCycleCount = seedTree.RegrowCycleCount;
+                // Prefab key: use SeedData seedName if available, else fallback
+                SeedTree seed = go.GetComponent<SeedTree>();
+                if (seed != null && seed.SeedData != null)
+                    state.prefabKey = seed.SeedData.seedName;
+                else
+                    state.prefabKey = "DefaultTree";
             }
             else
             {
-                state.isRegrowing = false;
-                state.regrowTimeRemaining = 0f;
-                state.harvestCount = 0;
-                state.regrowCycleCount = 0;
+                // Fallback if no unified controller (should not happen)
+                Debug.LogWarning($"Tree {go.name} has no TreeUnifiedInteraction – using individual components.");
+                TreeCuttable cuttable = go.GetComponent<TreeCuttable>();
+                SeedTree seed = go.GetComponent<SeedTree>();
+                if (cuttable != null)
+                {
+                    state.isCutDown = cuttable.IsCutDown;
+                    state.currentHits = cuttable.CurrentHits;
+                    state.respawnTimeRemaining = cuttable.RespawnTimeRemaining;
+                }
+                if (seed != null)
+                {
+                    state.isRegrowing = seed.IsRegrowing;
+                    state.regrowTimeRemaining = seed.RegrowTimeRemaining;
+                    state.harvestCount = seed.HarvestCount;
+                    state.regrowCycleCount = seed.RegrowCycleCount;
+                    if (seed.SeedData != null)
+                        state.prefabKey = seed.SeedData.seedName;
+                }
             }
 
             data.treeStates.Add(state);
         }
     }
 
+    // ---------- Unified tree loading ----------
     public void ApplyTreeStates(SaveData data)
     {
         if (data == null || data.treeStates == null || data.treeStates.Count == 0)
             return;
 
-        // Apply to all existing trees in the scene
-        TreeIdentifier[] allTreeIDs = FindObjectsOfType<TreeIdentifier>();
-        foreach (var idComp in allTreeIDs)
+        // 1. Apply to existing trees
+        TreeIdentifier[] existingIDs = FindObjectsOfType<TreeIdentifier>();
+        List<string> matchedIDs = new List<string>();
+
+        // Debugs
+        Debug.Log($"Matched {matchedIDs.Count} trees.  Instantiating for missing states.");
+        foreach (var state in data.treeStates)
+        {
+            if (!matchedIDs.Contains(state.id))
+            {
+                Debug.Log($"Missing tree with ID {state.id}, instantiating new one.");
+            }
+        }
+
+        foreach (var idComp in existingIDs)
         {
             TreeState state = data.treeStates.Find(s => s.id == idComp.UniqueID);
             if (state == null) continue;
 
+            matchedIDs.Add(state.id);
             GameObject go = idComp.gameObject;
-
-            // Restore position/rotation
             go.transform.position = new Vector3(state.posX, state.posY, state.posZ);
             go.transform.rotation = new Quaternion(state.rotX, state.rotY, state.rotZ, state.rotW);
 
-            // Apply to components
-            TreeCuttable cuttable = go.GetComponent<TreeCuttable>();
-            if (cuttable != null) cuttable.LoadState(state);
+            // Use unified controller if present
+            TreeUnifiedInteraction unified = go.GetComponent<TreeUnifiedInteraction>();
+            if (unified != null)
+            {
+                var unifiedState = new TreeUnifiedInteraction.UnifiedTreeState
+                {
+                    isCutDown = state.isCutDown,
+                    currentHits = state.currentHits,
+                    respawnTimeRemaining = state.respawnTimeRemaining,
+                    isRegrowing = state.isRegrowing,
+                    regrowTimeRemaining = state.regrowTimeRemaining,
+                    harvestCount = state.harvestCount,
+                    regrowCycleCount = state.regrowCycleCount
+                };
+                unified.LoadUnifiedState(unifiedState);
+            }
+            else
+            {
+                // Fallback to individual component loading (should not be needed)
+                Debug.LogWarning($"No TreeUnifiedInteraction on {go.name}, falling back to component loading.");
+                TreeCuttable cuttable = go.GetComponent<TreeCuttable>();
+                SeedTree seed = go.GetComponent<SeedTree>();
+                // We removed LoadState, so we need to handle this or ensure unified exists.
+                // For safety, we can still set via the new public setters if we add them.
+                // But we assume unified is present.
+            }
+        }
 
-            SeedTree seedTree = go.GetComponent<SeedTree>();
-            if (seedTree != null) seedTree.LoadState(state);
+        // 2. Instantiate missing trees
+        if (TreePrefabRegistry.Instance == null)
+        {
+            Debug.LogWarning("TreePrefabRegistry.Instance not found.");
+            return;
+        }
+
+        foreach (TreeState state in data.treeStates)
+        {
+            if (matchedIDs.Contains(state.id)) continue;
+
+            GameObject prefab = TreePrefabRegistry.Instance.GetPrefab(state.prefabKey);
+            if (prefab == null)
+            {
+                Debug.LogWarning($"No prefab for key '{state.prefabKey}' – skipping tree {state.id}");
+                continue;
+            }
+
+            Vector3 pos = new Vector3(state.posX, state.posY, state.posZ);
+            Quaternion rot = new Quaternion(state.rotX, state.rotY, state.rotZ, state.rotW);
+            GameObject newTree = Instantiate(prefab, pos, rot);
+
+            TreeIdentifier newID = newTree.GetComponent<TreeIdentifier>();
+            if (newID != null)
+                newID.SetID(state.id, true);
+            else
+                Debug.LogWarning($"Instantiated tree '{newTree.name}' has no TreeIdentifier.");
+
+            // Apply state via unified controller
+            TreeUnifiedInteraction unified = newTree.GetComponent<TreeUnifiedInteraction>();
+            if (unified != null)
+            {
+                var unifiedState = new TreeUnifiedInteraction.UnifiedTreeState
+                {
+                    isCutDown = state.isCutDown,
+                    currentHits = state.currentHits,
+                    respawnTimeRemaining = state.respawnTimeRemaining,
+                    isRegrowing = state.isRegrowing,
+                    regrowTimeRemaining = state.regrowTimeRemaining,
+                    harvestCount = state.harvestCount,
+                    regrowCycleCount = state.regrowCycleCount
+                };
+                unified.LoadUnifiedState(unifiedState);
+            }
+            else
+            {
+                Debug.LogWarning($"Instantiated tree '{newTree.name}' has no TreeUnifiedInteraction, state not applied.");
+            }
         }
     }
 }

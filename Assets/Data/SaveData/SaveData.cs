@@ -5,17 +5,18 @@ using System.Collections.Generic;
 public class TreeState
 {
     public string id;
+    public string prefabKey;           // which prefab to instantiate (for dynamic trees)
 
-    // ---------- Position & Rotation (for dynamic trees) ----------
+    // Position & Rotation
     public float posX, posY, posZ;
     public float rotX, rotY, rotZ, rotW;
 
-    // ---------- TreeCuttable data ----------
+    // TreeCuttable data
     public bool isCutDown;
     public int currentHits;
     public float respawnTimeRemaining;
 
-    // ---------- SeedTree data ----------
+    // SeedTree data
     public bool isRegrowing;
     public float regrowTimeRemaining;
     public int harvestCount;
@@ -25,7 +26,7 @@ public class TreeState
 [System.Serializable]
 public class SaveData
 {
-    // ---------- Player ----------
+    // Player
     public float posX, posY, posZ;
     public float rotX, rotY, rotZ, rotW;
 
@@ -35,10 +36,9 @@ public class SaveData
     public float currentOxygen;
     public float maxOxygen;
 
-    // ---------- Trees ----------
+    // Trees
     public List<TreeState> treeStates = new List<TreeState>();
 
-    // Helper methods for player
     public Vector3 GetPosition() => new Vector3(posX, posY, posZ);
     public Quaternion GetRotation() => new Quaternion(rotX, rotY, rotZ, rotW);
 

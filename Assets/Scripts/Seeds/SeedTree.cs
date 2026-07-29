@@ -35,10 +35,14 @@ public class SeedTree : MonoBehaviour
     private int regrowCycleCount = 0;
     private float[] harvestReductionMultipliers;
 
+    // ---- Public getters (used by SaveManager and others) ----
     public bool IsRegrowing => isRegrowing;
     public float RegrowTimeRemaining => isRegrowing ? resetTime - (Time.time - regrowStartTime) : 0f;
     public int HarvestCount => harvestCount;
     public int RegrowCycleCount => regrowCycleCount;
+    public SeedData SeedData => seedData;
+
+    public int GetAdjustedSeedAmount() => adjustedSeedAmount;
 
     private int adjustedSeedAmount
     {
@@ -46,12 +50,44 @@ public class SeedTree : MonoBehaviour
         {
             if (seedData == null || harvestReductionMultipliers == null || harvestReductionMultipliers.Length == 0)
                 return seedAmount;
-
             int clamped = Mathf.Clamp(harvestCount, 0, harvestReductionMultipliers.Length - 1);
             return Mathf.Max(1, Mathf.RoundToInt(seedData.harvestYield * harvestReductionMultipliers[clamped]));
         }
     }
 
+    // ---- Public setter for state restoration (called by TreeUnifiedInteraction) ----
+    public void SetSeedState(bool regrowing, int harvestCountVal, int regrowCycleVal, float regrowRemaining)
+    {
+        harvestCount = Mathf.Max(0, harvestCountVal);
+        regrowCycleCount = Mathf.Max(0, regrowCycleVal);
+
+        if (regrowing && regrowRemaining > 0f)
+        {
+            // Resume regrow
+            StartCoroutine(ResumeRegrowTimer(regrowRemaining));
+        }
+        else
+        {
+            isRegrowing = false;
+            canInteract = true;
+            if (treeRenderer != null && originalMaterial != null)
+            {
+                treeRenderer.material = originalMaterial;
+                treeRenderer.material.color = Color.white;
+            }
+        }
+    }
+
+    private IEnumerator ResumeRegrowTimer(float remaining)
+    {
+        isRegrowing = true;
+        regrowStartTime = Time.time;
+        canInteract = false; // during regrow, cannot collect
+        yield return new WaitForSeconds(remaining);
+        FinishRegrow();
+    }
+
+    // ---- Everything below is unchanged ----
     private void Start()
     {
         treeRenderer = GetComponent<Renderer>();
@@ -258,50 +294,5 @@ public class SeedTree : MonoBehaviour
             treeRenderer.material = highlightMaterial;
         else if (originalMaterial != null)
             treeRenderer.material = originalMaterial;
-    }
-
-    // ---------- Save / Load ----------
-
-    public TreeState GetSaveState()
-    {
-        TreeState state = new TreeState();
-        TreeIdentifier id = GetComponent<TreeIdentifier>();
-        state.id = id != null ? id.UniqueID : "";
-        state.isRegrowing = isRegrowing;
-        state.harvestCount = harvestCount;
-        state.regrowCycleCount = regrowCycleCount;
-        state.regrowTimeRemaining = isRegrowing ? resetTime - (Time.time - regrowStartTime) : 0f;
-        return state;
-    }
-
-    public void LoadState(TreeState state)
-    {
-        isRegrowing = state.isRegrowing;
-        harvestCount = state.harvestCount;
-        regrowCycleCount = state.regrowCycleCount;
-
-        if (isRegrowing && state.regrowTimeRemaining > 0f)
-        {
-            // Resume regrow with remaining time
-            StartCoroutine(ResumeRegrow(state.regrowTimeRemaining));
-        }
-        else
-        {
-            // If not regrowing, ensure visuals are normal
-            if (treeRenderer != null && originalMaterial != null)
-            {
-                treeRenderer.material = originalMaterial;
-                treeRenderer.material.color = Color.white;
-            }
-            canInteract = true;
-        }
-    }
-
-    private IEnumerator ResumeRegrow(float remainingTime)
-    {
-        isRegrowing = true;
-        regrowStartTime = Time.time; // not used further
-        yield return new WaitForSeconds(remainingTime);
-        FinishRegrow();
     }
 }

@@ -18,10 +18,13 @@ public class TreeIdentifier : MonoBehaviour
     {
         if (isIDLocked) return;
 
-        if (string.IsNullOrEmpty(uniqueID) || IsDuplicateInScene(uniqueID))
+        bool isEmpty = string.IsNullOrEmpty(uniqueID);
+        bool isDuplicate = IsDuplicateInScene(uniqueID);
+
+        if (isEmpty || isDuplicate)
         {
             uniqueID = Guid.NewGuid().ToString();
-            Debug.Log($"Generated new ID for {name}: {uniqueID}");
+            Debug.Log($"<color=purple>Generated new ID in Awake for {name}: {uniqueID} (Empty: {isEmpty}, Duplicate: {isDuplicate})</color>");
         }
     }
 
@@ -40,10 +43,16 @@ public class TreeIdentifier : MonoBehaviour
 #if UNITY_EDITOR
     private void OnValidate()
     {
-        if (!isIDLocked && (string.IsNullOrEmpty(uniqueID) || IsDuplicateInScene(uniqueID)))
+        if (!isIDLocked)
         {
-            uniqueID = Guid.NewGuid().ToString();
-            Debug.Log($"Generated new ID for {name}: {uniqueID}");
+            bool isEmpty = string.IsNullOrEmpty(uniqueID);
+            bool isDuplicate = IsDuplicateInScene(uniqueID);
+
+            if (isEmpty || isDuplicate)
+            {
+                uniqueID = Guid.NewGuid().ToString();
+                Debug.Log($"<color=green>Generated new ID in Editor for {name}: {uniqueID} (Empty: {isEmpty}, Duplicate: {isDuplicate})</color>");
+            }
         }
     }
 

@@ -19,6 +19,8 @@ public class SeedManager : MonoBehaviour
         return availableSeeds.Find(seed => seed.seedName == seedName);
     }
 
+    public SeedData GetSeedDataByName(string seedName) => GetSeedData(seedName);
+
     public bool HasSeed(string seedName, int amount)
     {
         if (InventoryManager.Instance != null)

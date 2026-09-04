@@ -1,0 +1,24 @@
+{
+    "name": "Arborvale.SteamManager",
+    "rootNamespace": "",
+    "references": [
+        "com.rlabrecque.steamworks.net"
+    ],
+    "includePlatforms": [
+        "Editor",
+        "LinuxStandalone64",
+        "macOSStandalone",
+        "WindowsStandalone32",
+        "WindowsStandalone64"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [
+        "STEAM_BUILD"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

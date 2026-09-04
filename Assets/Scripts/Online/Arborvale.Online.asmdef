@@ -1,0 +1,22 @@
+{
+    "name": "Arborvale.Online",
+    "rootNamespace": "Arborvale.Online",
+    "references": [
+        "Arborvale.Shared",
+        "Arborvale.SteamManager",
+        "Arborvale.Transport",
+        "Unity.Netcode.Runtime",
+        "com.rlabrecque.steamworks.net"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [
+        "STEAM_BUILD"
+    ],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

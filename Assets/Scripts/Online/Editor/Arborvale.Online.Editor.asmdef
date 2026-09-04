@@ -1,0 +1,18 @@
+{
+    "name": "Arborvale.Online.Editor",
+    "rootNamespace": "Arborvale.Online.Editor",
+    "references": [
+        "Arborvale.Shared"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

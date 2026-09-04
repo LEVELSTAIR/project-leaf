@@ -1,7 +1,13 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class PlantPot : MonoBehaviour, IInteractable
 {
+    /// <summary>
+    /// Fired just before the pot self-destructs at maturity.
+    /// Subscribe to swap in a networked or hybrid mature plant.
+    /// </summary>
+    public event Action OnMatured;
     [Header("Plant Settings")]
     public bool isPlanted = false;
     public SeedData plantedSeedData;
@@ -187,6 +193,7 @@ public class PlantPot : MonoBehaviour, IInteractable
     private void MakePlantReadyToHarvest()
     {
         isReadyToHarvest = true;
+        OnMatured?.Invoke();
         interactionPrompt = "Harvest Plant";
 
         // Replace seedling with mature plant (if prefab exists)

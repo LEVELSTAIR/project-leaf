@@ -57,6 +57,8 @@ public class KeyboardInputManager : MonoBehaviour
     [SerializeField] private bool isCraftOpen = false;
     [SerializeField] private bool isPlantingOpen = false;
     [SerializeField] private bool isEscapeMenuOpen = false;
+    [SerializeField] private bool isGraftingOpen = false;
+    [SerializeField] private bool isTradeOpen = false;
     [SerializeField] private int currentHotbarSlot = 1;
 
     public bool IsInventoryOpen => isInventoryOpen;
@@ -65,8 +67,10 @@ public class KeyboardInputManager : MonoBehaviour
     public bool IsCraftOpen => isCraftOpen;
     public bool IsPlantingOpen => isPlantingOpen;
     public bool IsEscapeMenuOpen => isEscapeMenuOpen;
+    public bool IsGraftingOpen => isGraftingOpen;
+    public bool IsTradeOpen => isTradeOpen;
     public int CurrentHotbarSlot => currentHotbarSlot;
-    public bool IsAnyPanelOpen => isInventoryOpen || isBookLogOpen || isMapEnlarged || isCraftOpen || isPlantingOpen || isEscapeMenuOpen;
+    public bool IsAnyPanelOpen => isInventoryOpen || isBookLogOpen || isMapEnlarged || isCraftOpen || isPlantingOpen || isEscapeMenuOpen || isGraftingOpen || isTradeOpen;
     #endregion
 
     #region Escape Menu UI References
@@ -452,6 +456,25 @@ public class KeyboardInputManager : MonoBehaviour
             isPlantingOpen = open;
             UpdateCursorState();
             Debug.Log($"[Input] Planting state set to: {isPlantingOpen}");
+        }
+    }
+
+    public void SetGraftingOpen(bool open)
+    {
+        if (isGraftingOpen != open)
+        {
+            isGraftingOpen = open;
+            UpdateCursorState();
+            Debug.Log($"[Input] Grafting state set to: {isGraftingOpen}");
+        }
+    }
+
+    public void SetTradeOpen(bool open)
+    {
+        if (isTradeOpen != open)
+        {
+            isTradeOpen = open;
+            UpdateCursorState();
         }
     }
     #endregion
